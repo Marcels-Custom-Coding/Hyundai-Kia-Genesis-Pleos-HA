@@ -1,0 +1,14 @@
+{
+  "data": {
+    "charge": {
+      "plugin": "connected",
+      "status": "charging",
+      "charging": true,
+      "stateOfCharge": 40,
+      "batteryCapacity": 100000,
+      "targetStateOfCharge": {"standard": 80, "quick": 90},
+      "remainTime": 10
+    },
+    "timestamp": "2026-01-01T00:00:00Z"
+  }
+}

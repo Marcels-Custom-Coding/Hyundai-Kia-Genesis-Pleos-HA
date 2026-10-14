@@ -164,9 +164,17 @@ class PleosClient:
         self._token = token
         self._token_expires = time.monotonic() + lifetime - TOKEN_REFRESH_MARGIN
 
-    async def _ensure_token(self, force: bool = False) -> None:
+    async def _ensure_token(self, stale: str | None = None) -> None:
+        """Log in when there is no valid token, or the token is ``stale``.
+
+        Parallel requests that all saw the same rejected token log in once.
+        """
         async with self._token_lock:
-            if force or self._token is None or time.monotonic() >= self._token_expires:
+            if (
+                self._token is None
+                or (stale is not None and self._token == stale)
+                or time.monotonic() >= self._token_expires
+            ):
                 await self.async_login()
 
     def invalidate_token(self) -> None:
@@ -177,14 +185,17 @@ class PleosClient:
         """GET a path and return the "data" block; refreshes the token once."""
         await self._ensure_token()
         for attempt in range(2):
+            used_token = self._token
             status, payload = await self._raw("GET", path)
             if not _is_error(status, payload):
                 return payload.get("data")
             code, message = _error_details(payload)
             token_problem = status == 401 or code in TOKEN_CODES
-            if attempt == 0 and (token_problem or status == 403):
+            if attempt == 0 and (
+                token_problem or (status == 403 and code != NO_PERMISSION_CODE)
+            ):
                 # Expired tokens come back as 401, 403 or 40003: log in again.
-                await self._ensure_token(force=True)
+                await self._ensure_token(stale=used_token)
                 continue
             if code == NO_DATA_CODE:
                 raise PleosNoDataError(path.rsplit("/", 1)[-1])

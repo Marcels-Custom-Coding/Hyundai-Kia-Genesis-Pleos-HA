@@ -1,0 +1,16 @@
+{
+  "data": {
+    "ignition": {
+      "status": "off",
+      "ignitionDetails": [
+        {"type": "ign1", "status": "off"},
+        {"type": "ign3", "status": "on"},
+        {"type": "acc", "status": "off"}
+      ]
+    },
+    "sleepMode": "off",
+    "odometer": {"value": 1000, "unit": "km"},
+    "transmission": {"parkingPosition": true},
+    "timestamp": "2026-01-01T00:00:00Z"
+  }
+}

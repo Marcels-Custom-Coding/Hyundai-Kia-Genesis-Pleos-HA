@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    name: Check manifest version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare tag with manifest version
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version="${TAG#v}"
+          manifest=$(python3 -c "import json; print(json.load(open('custom_components/hkg_pleos/manifest.json'))['version'])")
+          if [ "$version" != "$manifest" ]; then
+            echo "::error::Release tag $TAG does not match manifest version $manifest. Update manifest.json before releasing."
+            exit 1
+          fi
+          echo "Release $TAG matches manifest version $manifest."

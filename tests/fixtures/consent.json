@@ -1,0 +1,13 @@
+{
+  "data": {
+    "vehicles": [
+      {
+        "vin": "KMHTEST0000000001",
+        "nickname": "IONIQ 5",
+        "name": "IONIQ 5",
+        "type": "EV",
+        "sellname": "IONIQ 5"
+      }
+    ]
+  }
+}

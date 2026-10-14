@@ -1,0 +1,8 @@
+{
+  "data": {
+    "engine": {"fuelLevel": null},
+    "batteries": [{"type": "main", "remainRatio": 50}],
+    "distanceToEmpties": [{"type": "EV", "value": "106", "unit": "km"}],
+    "timestamp": "2026-01-01T00:00:00Z"
+  }
+}

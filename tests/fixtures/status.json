@@ -1,0 +1,30 @@
+{
+  "data": {
+    "doors": [
+      {"left": "locked", "right": "locked"},
+      {"left": "closed", "right": "open"}
+    ],
+    "hood": "closed",
+    "trunk": "closed",
+    "sunroof": "closed",
+    "tire": [
+      {"left": 50, "right": 50, "unit": "kpa"},
+      {"left": 49, "right": 255, "unit": "kpa"}
+    ],
+    "warnings": ["washFluid", "tirePressureRearLeft"],
+    "climateControl": {
+      "mode": "auto",
+      "status": "on",
+      "speed": 3,
+      "temperature": {"value": 21, "unit": "C"}
+    },
+    "windshield": {"defrost": "off"},
+    "steeringWheelHeat": "off",
+    "seats": [
+      {"left": {"heat": "low", "ventilation": "off"}, "right": {"heat": "off", "ventilation": "off"}},
+      {"left": {"heat": "off", "ventilation": "off"}, "right": {"heat": "off", "ventilation": "off"}}
+    ],
+    "outsideTemperature": {"value": 15, "unit": "C"},
+    "timestamp": "2026-01-01T00:05:00Z"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "data": {
+    "location": {
+      "latitude": 52.5,
+      "longitude": 13.4,
+      "altitude": 20,
+      "heading": 90,
+      "speed": {"value": 0, "unit": "kph"},
+      "type": 0
+    },
+    "timestamp": "2026-01-01T00:00:00Z"
+  }
+}
