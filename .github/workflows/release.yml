@@ -1,26 +1,40 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags: ["v*"]
 
 permissions:
   contents: write
 
 jobs:
-  version:
-    name: Check manifest version
+  release:
+    name: Create release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Compare tag with manifest version
         env:
-          TAG: ${{ github.event.release.tag_name }}
+          TAG: ${{ github.ref_name }}
         run: |
           version="${TAG#v}"
           manifest=$(python3 -c "import json; print(json.load(open('custom_components/hkg_pleos/manifest.json'))['version'])")
           if [ "$version" != "$manifest" ]; then
-            echo "::error::Release tag $TAG does not match manifest version $manifest. Update manifest.json before releasing."
+            echo "::error::Tag $TAG does not match manifest version $manifest. Update manifest.json before tagging."
             exit 1
           fi
-          echo "Release $TAG matches manifest version $manifest."
+      - name: Release notes from CHANGELOG.md
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          awk -v v="$version" '
+            /^## / { if (found) exit; if (index($0, "[" v "]") || index($0, " " v)) { found=1; next } }
+            found { print }
+          ' CHANGELOG.md > notes.md
+          test -s notes.md || echo "Release $TAG" > notes.md
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" --title "$TAG" --notes-file notes.md --verify-tag
