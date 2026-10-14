@@ -13,7 +13,6 @@ from homeassistant.config_entries import (
     OptionsFlow,
 )
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
     BooleanSelector,
@@ -48,7 +47,6 @@ from .const import (
     CONF_VEHICLES,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
-    LEGACY_DOMAIN,
     MAX_SCAN_INTERVAL,
     MIN_SCAN_INTERVAL,
     PLAYGROUND_URL,
@@ -56,6 +54,7 @@ from .const import (
     VEHICLE_NAME,
     VEHICLE_TYPE,
 )
+from .migrate import legacy_device_vins
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -138,13 +137,9 @@ def _apply_names(
 
 
 def _legacy_vins(hass: HomeAssistant, vins: list[str]) -> list[str]:
-    """VINs that have a device of the "Hyundai / Kia Connect" integration."""
-    registry = dr.async_get(hass)
-    return [
-        vin
-        for vin in vins
-        if registry.async_get_device(identifiers={(LEGACY_DOMAIN, f"vin:{vin}")})
-    ]
+    """VINs with a "Hyundai / Kia Connect" device whose entities can be taken over."""
+    found = legacy_device_vins(hass, vins)
+    return [vin for vin in vins if vin in found]
 
 
 class PleosConfigFlow(ConfigFlow, domain=DOMAIN):

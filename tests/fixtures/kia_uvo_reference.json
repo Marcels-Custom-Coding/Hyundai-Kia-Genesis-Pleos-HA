@@ -1,0 +1,457 @@
+{
+  "source": "kia_uvo (Hyundai / Kia Connect) translations and entity descriptions, pinned copy",
+  "sensor": {
+    "translation_keys": [
+      "air_temperature",
+      "car_battery_percentage",
+      "drive_mode",
+      "dtc_count",
+      "engine_type",
+      "ev_battery_capacity",
+      "ev_battery_chiller_rpm",
+      "ev_battery_pack_voltage",
+      "ev_battery_percentage",
+      "ev_battery_remain",
+      "ev_battery_soh_percentage",
+      "ev_battery_temperature_max",
+      "ev_battery_temperature_min",
+      "ev_battery_water_temperature",
+      "ev_charging_current",
+      "ev_charging_power",
+      "ev_driving_range",
+      "ev_estimated_current_charge_duration",
+      "ev_estimated_fast_charge_duration",
+      "ev_estimated_portable_charge_duration",
+      "ev_estimated_station_charge_duration",
+      "ev_first_departure_climate_temperature",
+      "ev_first_departure_days",
+      "ev_first_departure_time",
+      "ev_off_peak_end_time",
+      "ev_off_peak_start_time",
+      "ev_power_consumption_air_conditioning",
+      "ev_power_consumption_battery_cooling",
+      "ev_power_consumption_battery_heater",
+      "ev_second_departure_climate_temperature",
+      "ev_second_departure_days",
+      "ev_second_departure_time",
+      "ev_target_range_charge_ac",
+      "ev_target_range_charge_dc",
+      "front_left_seat_status",
+      "front_right_seat_status",
+      "fuel_driving_range",
+      "fuel_level",
+      "geocode_name",
+      "last_scanned_at",
+      "last_service_distance",
+      "last_updated_at",
+      "location_last_updated_at",
+      "next_service_distance",
+      "odometer",
+      "outside_temperature",
+      "power_consumption_30d",
+      "rear_left_seat_status",
+      "rear_right_seat_status",
+      "tire_pressure_front_left",
+      "tire_pressure_front_right",
+      "tire_pressure_rear_left",
+      "tire_pressure_rear_right",
+      "total_driving_range",
+      "total_power_consumed",
+      "total_power_regenerated",
+      "vehicle_identification_number"
+    ],
+    "legacy": {
+      "VIN": {
+        "translation_key": "vehicle_identification_number",
+        "en": "Vehicle Identification Number",
+        "de": "Vehicle Identification Number"
+      },
+      "_air_temperature": {
+        "translation_key": "air_temperature",
+        "en": "Set Temperature",
+        "de": "Set Temperature"
+      },
+      "_ev_driving_range": {
+        "translation_key": "ev_driving_range",
+        "en": "EV Range",
+        "de": "EV Range"
+      },
+      "_fuel_driving_range": {
+        "translation_key": "fuel_driving_range",
+        "en": "Fuel Driving Range",
+        "de": "Fuel Driving Range"
+      },
+      "_odometer": {
+        "translation_key": "odometer",
+        "en": "Odometer",
+        "de": "Odometer"
+      },
+      "_outside_temperature": {
+        "translation_key": "outside_temperature",
+        "en": "Outside temperature",
+        "de": "Outside temperature"
+      },
+      "_total_driving_range": {
+        "translation_key": "total_driving_range",
+        "en": "Total Driving Range",
+        "de": "Total Driving Range"
+      },
+      "ev_battery_capacity": {
+        "translation_key": "ev_battery_capacity",
+        "en": "EV Battery Capacity",
+        "de": "EV Battery Capacity"
+      },
+      "ev_battery_percentage": {
+        "translation_key": "ev_battery_percentage",
+        "en": "EV Battery Level",
+        "de": "EV Battery Level"
+      },
+      "ev_estimated_current_charge_duration": {
+        "translation_key": "ev_estimated_current_charge_duration",
+        "en": "Estimated Charge Duration",
+        "de": "Estimated Charge Duration"
+      },
+      "fuel_level": {
+        "translation_key": "fuel_level",
+        "en": "Fuel Level",
+        "de": "Fuel Level"
+      },
+      "last_updated_at": {
+        "translation_key": "last_updated_at",
+        "en": "Last Updated At",
+        "de": "Last Updated At"
+      },
+      "location_last_updated_at": {
+        "translation_key": "location_last_updated_at",
+        "en": "Location Last Updated",
+        "de": "Location Last Updated"
+      },
+      "tire_pressure_front_left": {
+        "translation_key": "tire_pressure_front_left",
+        "en": "Tire Pressure - Front Left",
+        "de": "Tire Pressure - Front Left"
+      },
+      "tire_pressure_front_right": {
+        "translation_key": "tire_pressure_front_right",
+        "en": "Tire Pressure - Front Right",
+        "de": "Tire Pressure - Front Right"
+      },
+      "tire_pressure_rear_left": {
+        "translation_key": "tire_pressure_rear_left",
+        "en": "Tire Pressure - Rear Left",
+        "de": "Tire Pressure - Rear Left"
+      },
+      "tire_pressure_rear_right": {
+        "translation_key": "tire_pressure_rear_right",
+        "en": "Tire Pressure - Rear Right",
+        "de": "Tire Pressure - Rear Right"
+      }
+    }
+  },
+  "binary_sensor": {
+    "translation_keys": [
+      "accessory_on",
+      "air_control_is_on",
+      "back_left_door_is_locked",
+      "back_left_door_is_open",
+      "back_left_window_is_open",
+      "back_right_door_is_locked",
+      "back_right_door_is_open",
+      "back_right_window_is_open",
+      "back_window_heater_is_on",
+      "battery_auxiliary_fail_warning_is_on",
+      "brake_fluid_warning_is_on",
+      "defrost_is_on",
+      "engine_is_running",
+      "ev_battery_heating_state",
+      "ev_battery_is_charging",
+      "ev_battery_is_plugged_in",
+      "ev_battery_precondition_enabled",
+      "ev_battery_winter_mode",
+      "ev_charge_port_door_is_open",
+      "ev_v2l_status",
+      "ev_v2x_status",
+      "front_left_door_is_locked",
+      "front_left_door_is_open",
+      "front_left_seat_heater_on",
+      "front_left_window_is_open",
+      "front_right_door_is_locked",
+      "front_right_door_is_open",
+      "front_right_seat_heater_on",
+      "front_right_window_is_open",
+      "fuel_level_is_low",
+      "headlamp_left_bifunc",
+      "headlamp_left_high",
+      "headlamp_left_low",
+      "headlamp_right_bifunc",
+      "headlamp_right_high",
+      "headlamp_right_low",
+      "headlamp_status",
+      "hood_is_open",
+      "ign3",
+      "is_locked",
+      "oil_level_warning_is_on",
+      "rear_left_seat_heater_on",
+      "rear_right_seat_heater_on",
+      "remote_ignition",
+      "side_mirror_heater_is_on",
+      "sleep_mode_check",
+      "smart_key_battery_warning_is_on",
+      "steering_wheel_heater_is_on",
+      "stop_lamp_left",
+      "stop_lamp_right",
+      "sunroof_is_open",
+      "tire_pressure_all_warning_is_on",
+      "tire_pressure_front_left_warning_is_on",
+      "tire_pressure_front_right_warning_is_on",
+      "tire_pressure_rear_left_warning_is_on",
+      "tire_pressure_rear_right_warning_is_on",
+      "transmission_condition",
+      "trunk_is_open",
+      "turn_signal_left_front",
+      "turn_signal_left_rear",
+      "turn_signal_right_front",
+      "turn_signal_right_rear",
+      "washer_fluid_warning_is_on"
+    ],
+    "legacy": {
+      "accessory_on": {
+        "translation_key": "accessory_on",
+        "en": "Accessory",
+        "de": "Accessory"
+      },
+      "air_control_is_on": {
+        "translation_key": "air_control_is_on",
+        "en": "Air Conditioner",
+        "de": "Air Conditioner"
+      },
+      "back_left_door_is_locked": {
+        "translation_key": "back_left_door_is_locked",
+        "en": "Back Left Door Lock",
+        "de": "Back Left Door Lock"
+      },
+      "back_left_door_is_open": {
+        "translation_key": "back_left_door_is_open",
+        "en": "Back Left Door",
+        "de": "Back Left Door"
+      },
+      "back_right_door_is_locked": {
+        "translation_key": "back_right_door_is_locked",
+        "en": "Back Right Door Lock",
+        "de": "Back Right Door Lock"
+      },
+      "back_right_door_is_open": {
+        "translation_key": "back_right_door_is_open",
+        "en": "Back Right Door",
+        "de": "Back Right Door"
+      },
+      "brake_fluid_warning_is_on": {
+        "translation_key": "brake_fluid_warning_is_on",
+        "en": "Brake Fluid Warning",
+        "de": "Brake Fluid Warning"
+      },
+      "defrost_is_on": {
+        "translation_key": "defrost_is_on",
+        "en": "Defrost",
+        "de": "Defrost"
+      },
+      "engine_is_running": {
+        "translation_key": "engine_is_running",
+        "en": "Engine",
+        "de": "Engine"
+      },
+      "ev_battery_is_charging": {
+        "translation_key": "ev_battery_is_charging",
+        "en": "EV Battery Charge",
+        "de": "EV Battery Charge"
+      },
+      "ev_battery_is_plugged_in": {
+        "translation_key": "ev_battery_is_plugged_in",
+        "en": "EV Battery Plug",
+        "de": "EV Battery Plug"
+      },
+      "ev_v2l_status": {
+        "translation_key": "ev_v2l_status",
+        "en": "V2L status",
+        "de": "V2L status"
+      },
+      "ev_v2x_status": {
+        "translation_key": "ev_v2x_status",
+        "en": "V2X status",
+        "de": "V2X status"
+      },
+      "front_left_door_is_locked": {
+        "translation_key": "front_left_door_is_locked",
+        "en": "Front Left Door Lock",
+        "de": "Front Left Door Lock"
+      },
+      "front_left_door_is_open": {
+        "translation_key": "front_left_door_is_open",
+        "en": "Front Left Door",
+        "de": "Front Left Door"
+      },
+      "front_left_seat_heater_on": {
+        "translation_key": "front_left_seat_heater_on",
+        "en": "Front Left Seat Heater",
+        "de": "Front Left Seat Heater"
+      },
+      "front_right_door_is_locked": {
+        "translation_key": "front_right_door_is_locked",
+        "en": "Front Right Door Lock",
+        "de": "Front Right Door Lock"
+      },
+      "front_right_door_is_open": {
+        "translation_key": "front_right_door_is_open",
+        "en": "Front Right Door",
+        "de": "Front Right Door"
+      },
+      "front_right_seat_heater_on": {
+        "translation_key": "front_right_seat_heater_on",
+        "en": "Front Right Seat Heater",
+        "de": "Front Right Seat Heater"
+      },
+      "fuel_level_is_low": {
+        "translation_key": "fuel_level_is_low",
+        "en": "Fuel Low Level",
+        "de": "Fuel Low Level"
+      },
+      "headlamp_status": {
+        "translation_key": "headlamp_status",
+        "en": "Headlamp Status",
+        "de": "Headlamp Status"
+      },
+      "hood_is_open": {
+        "translation_key": "hood_is_open",
+        "en": "Hood",
+        "de": "Hood"
+      },
+      "ign3": {
+        "translation_key": "ign3",
+        "en": "IGN3",
+        "de": "IGN3"
+      },
+      "is_locked": {
+        "translation_key": "is_locked",
+        "en": "Locked",
+        "de": "Locked"
+      },
+      "oil_level_warning_is_on": {
+        "translation_key": "oil_level_warning_is_on",
+        "en": "Oil Level Warning",
+        "de": "Oil Level Warning"
+      },
+      "rear_left_seat_heater_on": {
+        "translation_key": "rear_left_seat_heater_on",
+        "en": "Rear Left Seat Heater",
+        "de": "Rear Left Seat Heater"
+      },
+      "rear_right_seat_heater_on": {
+        "translation_key": "rear_right_seat_heater_on",
+        "en": "Rear Right Seat Heater",
+        "de": "Rear Right Seat Heater"
+      },
+      "sleep_mode_check": {
+        "translation_key": "sleep_mode_check",
+        "en": "Sleep Mode Check",
+        "de": "Sleep Mode Check"
+      },
+      "smart_key_battery_warning_is_on": {
+        "translation_key": "smart_key_battery_warning_is_on",
+        "en": "Smart Key Battery Warning",
+        "de": "Smart Key Battery Warning"
+      },
+      "steering_wheel_heater_is_on": {
+        "translation_key": "steering_wheel_heater_is_on",
+        "en": "Steering Wheel Heater",
+        "de": "Steering Wheel Heater"
+      },
+      "stop_lamp_left": {
+        "translation_key": "stop_lamp_left",
+        "en": "Rear Left Lamp Fault",
+        "de": "Rear Left Lamp Fault"
+      },
+      "stop_lamp_right": {
+        "translation_key": "stop_lamp_right",
+        "en": "Rear Right Lamp Fault",
+        "de": "Rear Right Lamp Fault"
+      },
+      "sunroof_is_open": {
+        "translation_key": "sunroof_is_open",
+        "en": "Sunroof",
+        "de": "Sunroof"
+      },
+      "tire_pressure_all_warning_is_on": {
+        "translation_key": "tire_pressure_all_warning_is_on",
+        "en": "Tire Pressure - All",
+        "de": "Tire Pressure - All"
+      },
+      "tire_pressure_front_left_warning_is_on": {
+        "translation_key": "tire_pressure_front_left_warning_is_on",
+        "en": "Tire Pressure - Front Left",
+        "de": "Tire Pressure - Front Left"
+      },
+      "tire_pressure_front_right_warning_is_on": {
+        "translation_key": "tire_pressure_front_right_warning_is_on",
+        "en": "Tire Pressure - Front Right",
+        "de": "Tire Pressure - Front Right"
+      },
+      "tire_pressure_rear_left_warning_is_on": {
+        "translation_key": "tire_pressure_rear_left_warning_is_on",
+        "en": "Tire Pressure - Rear Left",
+        "de": "Tire Pressure - Rear Left"
+      },
+      "tire_pressure_rear_right_warning_is_on": {
+        "translation_key": "tire_pressure_rear_right_warning_is_on",
+        "en": "Tire Pressure - Rear Right",
+        "de": "Tire Pressure - Rear Right"
+      },
+      "transmission_condition": {
+        "translation_key": "transmission_condition",
+        "en": "Transmission Condition",
+        "de": "Transmission Condition"
+      },
+      "trunk_is_open": {
+        "translation_key": "trunk_is_open",
+        "en": "Trunk",
+        "de": "Trunk"
+      },
+      "turn_signal_left_front": {
+        "translation_key": "turn_signal_left_front",
+        "en": "Turn Signal Left Front",
+        "de": "Turn Signal Left Front"
+      },
+      "turn_signal_left_rear": {
+        "translation_key": "turn_signal_left_rear",
+        "en": "Turn Signal Left Rear",
+        "de": "Turn Signal Left Rear"
+      },
+      "turn_signal_right_front": {
+        "translation_key": "turn_signal_right_front",
+        "en": "Turn Signal Right Front",
+        "de": "Turn Signal Right Front"
+      },
+      "turn_signal_right_rear": {
+        "translation_key": "turn_signal_right_rear",
+        "en": "Turn Signal Right Rear",
+        "de": "Turn Signal Right Rear"
+      },
+      "washer_fluid_warning_is_on": {
+        "translation_key": "washer_fluid_warning_is_on",
+        "en": "Washer Fluid Warning",
+        "de": "Washer Fluid Warning"
+      }
+    }
+  },
+  "device_tracker": {
+    "translation_keys": [
+      "location"
+    ],
+    "legacy": {
+      "location": {
+        "translation_key": "location",
+        "en": "Location",
+        "de": "Location"
+      }
+    }
+  }
+}

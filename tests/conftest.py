@@ -8,14 +8,28 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock, patch
 
+from homeassistant.core import HomeAssistant
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import (
     AiohttpClientMocker,
     AiohttpClientMockResponse,
 )
 from yarl import URL
 
-from custom_components.hkg_pleos.const import API_HOST, ENDPOINTS
+from custom_components.hkg_pleos.const import (
+    API_HOST,
+    CONF_BRAND,
+    CONF_CLIENT_ID,
+    CONF_CLIENT_SECRET,
+    CONF_SCAN_INTERVAL,
+    CONF_VEHICLES,
+    DOMAIN,
+    ENDPOINTS,
+    VEHICLE_MODEL,
+    VEHICLE_NAME,
+    VEHICLE_TYPE,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -26,6 +40,22 @@ VIN = "KMHTEST0000000001"
 
 TOKEN_URL = f"{API_HOST}/v1/auth/personal-token"
 CONSENT_URL = f"{API_HOST}/v1/vehicles/consent"
+
+ENTRY_TITLE = "Hyundai \N{EN DASH} IONIQ 5"
+
+
+def entry_data(**vehicles: dict[str, Any]) -> dict[str, Any]:
+    """Config entry data with the fixture key and the given vehicles.
+
+    Without vehicles, the fixture vehicle (VIN) is used.
+    """
+    return {
+        CONF_BRAND: BRAND,
+        CONF_CLIENT_ID: CLIENT_ID,
+        CONF_CLIENT_SECRET: CLIENT_SECRET,
+        CONF_VEHICLES: vehicles
+        or {VIN: {VEHICLE_NAME: "IONIQ 5", VEHICLE_MODEL: "IONIQ 5", VEHICLE_TYPE: "EV"}},
+    }
 
 
 def load_json(name: str) -> dict[str, Any]:
@@ -50,6 +80,27 @@ def sequence(method: str, url: str, *answers: tuple[int, Any]) -> Callable[..., 
         return AiohttpClientMockResponse(method, URL(url), status=status, json=payload)
 
     return side_effect
+
+
+def register_pleos(
+    aioclient_mock: AiohttpClientMocker,
+    token_payload: dict[str, Any],
+    consent_payload: dict[str, Any],
+    vehicle_payloads: dict[str, dict[str, Any]],
+    vin: str = VIN,
+) -> None:
+    """Register answers for the token, vehicle list and snapshot endpoints."""
+    aioclient_mock.post(TOKEN_URL, json=token_payload)
+    aioclient_mock.get(CONSENT_URL, json=consent_payload)
+    for endpoint, payload in vehicle_payloads.items():
+        aioclient_mock.get(endpoint_url(endpoint, vin), json=payload)
+
+
+async def setup_entry(hass: HomeAssistant, entry: MockConfigEntry) -> bool:
+    """Set up a config entry and wait until its platforms are done."""
+    result = await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    return result
 
 
 @pytest.fixture(autouse=True)
@@ -84,10 +135,7 @@ def mock_pleos(
     vehicle_payloads: dict[str, dict[str, Any]],
 ) -> AiohttpClientMocker:
     """Answer all Pleos API calls with the sample payloads."""
-    aioclient_mock.post(TOKEN_URL, json=token_payload)
-    aioclient_mock.get(CONSENT_URL, json=consent_payload)
-    for endpoint, payload in vehicle_payloads.items():
-        aioclient_mock.get(endpoint_url(endpoint), json=payload)
+    register_pleos(aioclient_mock, token_payload, consent_payload, vehicle_payloads)
     return aioclient_mock
 
 
@@ -113,3 +161,26 @@ def mock_pleos_client(
         ),
     ):
         yield login
+
+
+@pytest.fixture
+def config_entry(hass: HomeAssistant) -> MockConfigEntry:
+    """A config entry for the fixture key and vehicle, added to hass."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title=ENTRY_TITLE,
+        unique_id=f"{BRAND}_{CLIENT_ID}",
+        data=entry_data(),
+        options={CONF_SCAN_INTERVAL: 10},
+    )
+    entry.add_to_hass(hass)
+    return entry
+
+
+@pytest.fixture
+def mock_setup_entry() -> Generator[AsyncMock]:
+    """Skip setting up the integration (config flow tests)."""
+    with patch(
+        "custom_components.hkg_pleos.async_setup_entry", AsyncMock(return_value=True)
+    ) as setup:
+        yield setup

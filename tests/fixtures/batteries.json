@@ -5,7 +5,7 @@
       "status": "charging",
       "charging": true,
       "stateOfCharge": 40,
-      "batteryCapacity": 100000,
+      "batteryCapacity": 273960,
       "targetStateOfCharge": {"standard": 80, "quick": 90},
       "remainTime": 10
     },
