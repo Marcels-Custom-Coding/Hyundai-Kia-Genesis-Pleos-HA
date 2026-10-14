@@ -3,6 +3,11 @@ name: Release
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to create, e.g. v0.1.0 (must match manifest.json)"
+        required: true
 
 permissions:
   contents: write
@@ -15,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Compare tag with manifest version
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           version="${TAG#v}"
           manifest=$(python3 -c "import json; print(json.load(open('custom_components/hkg_pleos/manifest.json'))['version'])")
@@ -25,7 +30,7 @@ jobs:
           fi
       - name: Release notes from CHANGELOG.md
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           version="${TAG#v}"
           awk -v v="$version" '
@@ -36,5 +41,5 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" --title "$TAG" --notes-file notes.md --verify-tag
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: gh release create "$TAG" --title "$TAG" --notes-file notes.md --target "$GITHUB_SHA"
