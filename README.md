@@ -7,6 +7,8 @@
 
 Home Assistant integration for Hyundai, Kia and Genesis vehicles using the official **Pleos Vehicle Data API**.
 
+<a href="https://buymeacoffee.com/marcels.custom"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50"></a>
+
 ## Schnellinstallation / Quick install
 
 Die Integration ist (noch) nicht im HACS-Standardkatalog. Du fügst dieses Repository einmalig als **benutzerdefiniertes Repository** hinzu.
@@ -407,7 +409,7 @@ Die oben markierten Screenshots gehören nach `docs/images/`.
 Die Integration ist kostenlos und bleibt es. Wenn sie dir gefällt, kannst du mir freiwillig einen Kaffee spendieren – es gibt dafür keine Gegenleistung, alle Funktionen sind für alle gleich.
 *The integration is free and stays free. If you like it, you can buy me a coffee – voluntarily, nothing extra in return, all features are the same for everyone.*
 
-<a href="https://buymeacoffee.com/marcels.custom"><img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=%E2%98%95&slug=marcels.custom&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" alt="Buy me a coffee" height="45"></a>
+<a href="https://buymeacoffee.com/marcels.custom"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50"></a>
 
 ## License / Lizenz
 
