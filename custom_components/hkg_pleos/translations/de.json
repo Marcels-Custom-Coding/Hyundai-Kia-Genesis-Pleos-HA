@@ -1,0 +1,179 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hyundai Kia Genesis (Pleos)",
+        "description": "Diese Integration zeigt Daten deines Autos in Home Assistant: Akku, Reichweite, Türen, Position und mehr. Die Daten kommen von der offiziellen Pleos Vehicle Data API.\n\nSteuern (Klima, Laden, Schloss) ist über diesen Weg nicht möglich.\n\nVon welcher Marke ist dein Auto?",
+        "data": {
+          "brand": "Marke"
+        },
+        "data_description": {
+          "brand": "Die Marke deines Autos. Hast du Autos von mehreren Marken, richte die Integration einmal pro Marke ein."
+        }
+      },
+      "key_menu": {
+        "title": "Hast du schon einen API-Schlüssel?",
+        "description": "Du brauchst einen kostenlosen persönlichen API-Schlüssel (Client-ID und Client-Secret) aus dem Pleos Playground für deinen {brand}.",
+        "menu_options": {
+          "credentials": "Ja, eingeben",
+          "guide": "Nein, zeig mir wie"
+        }
+      },
+      "guide": {
+        "title": "So bekommst du deinen API-Schlüssel",
+        "description": "1. [pleos.ai/playground]({url}) öffnen und kostenlos registrieren.\n2. Oben rechts auf das Personen-Symbol › **My Vehicle Data API**.\n3. Reiter **{brand}** wählen, Bedingungen annehmen, **Get API Key**.\n4. Mit den Zugangsdaten der {brand}-App ({account}) anmelden.\n5. Client-ID und Client-Secret kopieren, dann hier auf **Weiter**.\n\n**Gut zu wissen:**\n- Das geht nur in Europa.\n- Nur Autos, die schon in deiner {account}-App sind, kommen in den Schlüssel. Kommt später ein Auto dazu, brauchst du einen neuen Schlüssel."
+      },
+      "credentials": {
+        "title": "API-Schlüssel eingeben",
+        "description": "Füge Client-ID und Client-Secret aus dem [Pleos Playground]({url}) › My Vehicle Data API ein. Home Assistant prüft den Schlüssel sofort und holt deine Autos.",
+        "data": {
+          "client_id": "Client-ID",
+          "client_secret": "Client-Secret"
+        },
+        "data_description": {
+          "client_id": "Steht im Pleos Playground unter My Vehicle Data API nach „Get API Key“. Ohne Leerzeichen kopieren.",
+          "client_secret": "Steht neben der Client-ID. Es wird nur in deinem Home Assistant gespeichert und hier verdeckt angezeigt."
+        }
+      },
+      "vehicle": {
+        "title": "Auto {index} von {count}",
+        "description": "Gefunden: **{model}** (VIN endet auf …{vin_tail}).\n\nSoll dieses Auto dazu, und wie soll es heißen?",
+        "data": {
+          "include": "Dieses Auto hinzufügen",
+          "name": "Name"
+        },
+        "data_description": {
+          "include": "Schalte das aus, wenn du dieses Auto nicht in Home Assistant haben willst.",
+          "name": "So heißen alle Entitäten. Wenn du vorher Hyundai/Kia Connect hattest, nimm denselben Namen, dann laufen alte Automationen weiter."
+        }
+      },
+      "finish": {
+        "title": "Fast fertig",
+        "description": "Wähle, wie oft Home Assistant neue Daten von deinem Auto holen soll.",
+        "data": {
+          "scan_interval": "Wie oft Daten holen? (Minuten)",
+          "migrate": "Alte Entitäten übernehmen?"
+        },
+        "data_description": {
+          "scan_interval": "Standard: 10 Minuten. Erlaubt: 5 bis 1440 Minuten (einmal am Tag). Das Auto schickt nur ab und zu neue Daten, sehr kurze Abstände bringen daher selten etwas.",
+          "migrate": "Dieses Auto ist auch in der Integration „Hyundai / Kia Connect“ eingerichtet. Wenn du das einschaltest, übernehmen die neuen Entitäten die alten Entity-IDs: Verlauf, Automationen und Dashboards bleiben erhalten. Die alten Entitäten werden entfernt. Entferne danach die alte Integration, damit sie sie nicht neu anlegt. Bleibt es aus, wird nichts angefasst."
+        }
+      },
+      "reconfigure": {
+        "title": "Was möchtest du ändern?",
+        "description": "Änderungen für deinen {brand}-Schlüssel.",
+        "menu_options": {
+          "add_vehicle": "Neues Auto hinzufügen",
+          "change_key": "Schlüssel ändern",
+          "rename": "Autos umbenennen / Intervall"
+        }
+      },
+      "add_vehicle": {
+        "title": "Neues Auto hinzufügen",
+        "description": "Ein Schlüssel enthält nur die Autos, die beim Ausstellen in deiner App waren. Für ein neues Auto brauchst du einen neuen Schlüssel:\n\n1. Auto in der {brand}-App ({account}) hinzufügen.\n2. Im [Pleos Playground]({url}) › My Vehicle Data API den alten Schlüssel widerrufen.\n3. **Get API Key** für einen neuen Schlüssel.\n4. Hier die neue Client-ID und das neue Client-Secret eingeben.\n\nDanach werden nur die neuen Autos zur Benennung angezeigt. Bestehende Autos und Entitäten bleiben unverändert.",
+        "data": {
+          "client_id": "Client-ID",
+          "client_secret": "Client-Secret"
+        },
+        "data_description": {
+          "client_id": "Steht im Pleos Playground unter My Vehicle Data API nach „Get API Key“. Ohne Leerzeichen kopieren.",
+          "client_secret": "Steht neben der Client-ID. Es wird nur in deinem Home Assistant gespeichert und hier verdeckt angezeigt."
+        }
+      },
+      "change_key": {
+        "title": "Schlüssel ändern",
+        "description": "Gib die neue Client-ID und das neue Client-Secret aus dem [Pleos Playground]({url}) › My Vehicle Data API ein. Der neue Schlüssel muss mindestens eines deiner schon eingerichteten Autos enthalten.",
+        "data": {
+          "client_id": "Client-ID",
+          "client_secret": "Client-Secret"
+        },
+        "data_description": {
+          "client_id": "Steht im Pleos Playground unter My Vehicle Data API nach „Get API Key“. Ohne Leerzeichen kopieren.",
+          "client_secret": "Steht neben der Client-ID. Es wird nur in deinem Home Assistant gespeichert und hier verdeckt angezeigt."
+        }
+      },
+      "rename": {
+        "title": "Autos umbenennen / Intervall",
+        "description": "Ändere die Namen deiner Autos und wie oft Daten geholt werden. Die Entitäten heißen nach dem Autonamen.",
+        "data": {
+          "scan_interval": "Wie oft Daten holen? (Minuten)"
+        },
+        "data_description": {
+          "scan_interval": "Standard: 10 Minuten. Erlaubt: 5 bis 1440 Minuten (einmal am Tag). Das Auto schickt nur ab und zu neue Daten, sehr kurze Abstände bringen daher selten etwas."
+        }
+      },
+      "reauth_confirm": {
+        "title": "API-Schlüssel erneuern",
+        "description": "Der API-Schlüssel für {brand} gilt nicht mehr. Vielleicht wurde er widerrufen oder ist abgelaufen.\n\nSo bekommst du einen neuen:\n1. [Pleos Playground]({url}) › My Vehicle Data API öffnen.\n2. Den alten Schlüssel widerrufen, falls er noch angezeigt wird.\n3. **Get API Key** und mit deinen {account}-Zugangsdaten anmelden.\n4. Hier die neue Client-ID und das neue Client-Secret eingeben.",
+        "data": {
+          "client_id": "Client-ID",
+          "client_secret": "Client-Secret"
+        },
+        "data_description": {
+          "client_id": "Steht im Pleos Playground unter My Vehicle Data API nach „Get API Key“. Ohne Leerzeichen kopieren.",
+          "client_secret": "Steht neben der Client-ID. Es wird nur in deinem Home Assistant gespeichert und hier verdeckt angezeigt."
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Client-ID oder Secret stimmen nicht. Bitte ohne Leerzeichen neu kopieren.",
+      "region_unsupported": "Pleos unterstützt deine Region nicht. Der persönliche API-Schlüssel funktioniert nur für Autos in Europa.",
+      "no_vehicles": "Der Schlüssel enthält kein Auto. Ist das Auto in deiner {account}-App? Wurde der Schlüssel danach geholt? So holst du einen neuen Schlüssel: im Pleos Playground › My Vehicle Data API den alten Schlüssel widerrufen, erneut „Get API Key“ und den neuen Schlüssel hier eingeben.",
+      "cannot_connect": "Pleos ist gerade nicht erreichbar. Prüfe deine Internetverbindung und versuche es später nochmal.",
+      "unknown": "Etwas Unerwartetes ist schiefgelaufen. Versuche es später nochmal. Passiert es öfter, schau ins Home-Assistant-Protokoll.",
+      "vehicle_already_configured": "Alle Autos dieses Schlüssels sind schon in Home Assistant eingerichtet. Um für sie einen neuen Schlüssel zu nutzen, öffne den bestehenden Eintrag und wähle „Neu konfigurieren“ › „Schlüssel ändern“.",
+      "no_vehicle_selected": "Bitte füge mindestens ein Auto hinzu.",
+      "no_new_vehicles": "Dieser Schlüssel enthält kein neues Auto. Hast du das Auto in der App hinzugefügt, bevor du den neuen Schlüssel geholt hast? Wenn nicht: hinzufügen, Schlüssel widerrufen, neuen holen und nochmal versuchen.",
+      "wrong_account": "Dieser Schlüssel enthält keines deiner hier eingerichteten Autos. Nimm den Schlüssel vom selben {account}-Konto.",
+      "key_in_use": "Dieser Schlüssel wird schon von einem anderen Eintrag dieser Integration genutzt."
+    },
+    "abort": {
+      "already_configured": "Dieser Schlüssel ist schon eingerichtet. Zum Ändern öffne den bestehenden Eintrag und wähle „Neu konfigurieren“.",
+      "reconfigure_successful": "Fertig! Deine Änderungen sind gespeichert.",
+      "reauth_successful": "Fertig! Der neue Schlüssel funktioniert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Autos umbenennen / Intervall",
+        "description": "Ändere die Namen deiner Autos und wie oft Daten geholt werden. Die Entitäten heißen nach dem Autonamen.",
+        "data": {
+          "scan_interval": "Wie oft Daten holen? (Minuten)"
+        },
+        "data_description": {
+          "scan_interval": "Standard: 10 Minuten. Erlaubt: 5 bis 1440 Minuten (einmal am Tag). Das Auto schickt nur ab und zu neue Daten, sehr kurze Abstände bringen daher selten etwas."
+        }
+      }
+    }
+  },
+  "selector": {
+    "brand": {
+      "options": {
+        "hyundai": "Hyundai",
+        "kia": "Kia",
+        "genesis": "Genesis"
+      }
+    }
+  },
+  "issues": {
+    "auth_failed": {
+      "title": "Der API-Schlüssel für {brand} gilt nicht mehr",
+      "description": "Der API-Schlüssel für {brand} gilt nicht mehr – bitte neu eingeben.\n\nGeh zu **Einstellungen › Geräte & Dienste › Hyundai Kia Genesis (Pleos)** und klicke auf **Erneut authentifizieren** (oder wähle **Neu konfigurieren** › **Schlüssel ändern**). Einen neuen Schlüssel bekommst du im [Pleos Playground]({url}) › My Vehicle Data API."
+    },
+    "vehicle_removed": {
+      "title": "Auto {name} nicht mehr im Schlüssel",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Auto {name} nicht mehr im Schlüssel",
+            "description": "Das Auto **{name}** (VIN endet auf …{vin_tail}) ist nicht mehr in deinem API-Schlüssel, zum Beispiel weil die Freigabe entzogen oder das Auto verkauft wurde.\n\nAus Home Assistant entfernen? Gerät und Entitäten werden gelöscht. Soll das Auto bleiben, hol stattdessen einen neuen Schlüssel, der es enthält (Neu konfigurieren › Schlüssel ändern)."
+          }
+        },
+        "abort": {
+          "entry_not_found": "Den Integrationseintrag für dieses Auto gibt es nicht mehr."
+        }
+      }
+    }
+  }
+}

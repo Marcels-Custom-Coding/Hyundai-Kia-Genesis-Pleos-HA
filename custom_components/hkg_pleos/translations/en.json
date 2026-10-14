@@ -1,0 +1,179 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hyundai Kia Genesis (Pleos)",
+        "description": "This integration shows your car's data in Home Assistant: battery, range, doors, position and more. The data comes from the official Pleos Vehicle Data API.\n\nControlling the car (climate, charging, locks) is not possible this way.\n\nWhich brand is your car?",
+        "data": {
+          "brand": "Brand"
+        },
+        "data_description": {
+          "brand": "The brand of your car. If you have cars of several brands, set up the integration once per brand."
+        }
+      },
+      "key_menu": {
+        "title": "Do you already have an API key?",
+        "description": "You need a free personal API key (Client ID and Client Secret) from the Pleos Playground for your {brand}.",
+        "menu_options": {
+          "credentials": "Yes, enter it",
+          "guide": "No, show me how"
+        }
+      },
+      "guide": {
+        "title": "How to get your API key",
+        "description": "1. Open [pleos.ai/playground]({url}) and sign up for free.\n2. Click the person icon in the top right › **My Vehicle Data API**.\n3. Choose the **{brand}** tab, accept the terms and click **Get API Key**.\n4. Sign in with the login of your {brand} app ({account}).\n5. Copy the Client ID and the Client Secret, then click **Next** here.\n\n**Good to know:**\n- This only works for cars in Europe.\n- Only cars that are already in your {account} app are included in the key. If you add a car later, you need a new key."
+      },
+      "credentials": {
+        "title": "Enter your API key",
+        "description": "Paste the Client ID and Client Secret from the [Pleos Playground]({url}) › My Vehicle Data API. Home Assistant checks the key right away and fetches your cars.",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client Secret"
+        },
+        "data_description": {
+          "client_id": "Shown in the Pleos Playground under My Vehicle Data API after \"Get API Key\". Copy it without spaces.",
+          "client_secret": "Shown next to the Client ID. It is stored only in your Home Assistant and is hidden here."
+        }
+      },
+      "vehicle": {
+        "title": "Car {index} of {count}",
+        "description": "Found: **{model}** (VIN ending in …{vin_tail}).\n\nShould this car be added, and what should it be called?",
+        "data": {
+          "include": "Add this car",
+          "name": "Name"
+        },
+        "data_description": {
+          "include": "Turn this off if you don't want this car in Home Assistant.",
+          "name": "All entities are named after this. If you used Hyundai/Kia Connect before, use the same name so your old automations keep working."
+        }
+      },
+      "finish": {
+        "title": "Almost done",
+        "description": "Choose how often Home Assistant should fetch new data from your car.",
+        "data": {
+          "scan_interval": "How often to fetch data? (minutes)",
+          "migrate": "Take over old entities?"
+        },
+        "data_description": {
+          "scan_interval": "Default: 10 minutes. Allowed: 5 to 1440 minutes (once a day). The car only sends new data now and then, so very short intervals rarely help.",
+          "migrate": "We found this car in the \"Hyundai / Kia Connect\" integration. If you turn this on, the new entities take over the old entity IDs: history, automations and dashboards are kept. The old entities are removed. Afterwards, remove the old integration so it does not create them again. If you leave this off, nothing is changed."
+        }
+      },
+      "reconfigure": {
+        "title": "What do you want to change?",
+        "description": "Changes for your {brand} key.",
+        "menu_options": {
+          "add_vehicle": "Add a new car",
+          "change_key": "Change the key",
+          "rename": "Rename cars / interval"
+        }
+      },
+      "add_vehicle": {
+        "title": "Add a new car",
+        "description": "A key only contains the cars that were in your app when it was created. For a new car you need a new key:\n\n1. Add the car in your {brand} app ({account}).\n2. In the [Pleos Playground]({url}) › My Vehicle Data API, revoke the old key.\n3. Click **Get API Key** to get a new key.\n4. Enter the new Client ID and Client Secret here.\n\nAfterwards only the new cars are shown for naming. Your existing cars and entities stay as they are.",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client Secret"
+        },
+        "data_description": {
+          "client_id": "Shown in the Pleos Playground under My Vehicle Data API after \"Get API Key\". Copy it without spaces.",
+          "client_secret": "Shown next to the Client ID. It is stored only in your Home Assistant and is hidden here."
+        }
+      },
+      "change_key": {
+        "title": "Change the key",
+        "description": "Enter the new Client ID and Client Secret from the [Pleos Playground]({url}) › My Vehicle Data API. The new key must contain at least one of your cars that are already set up.",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client Secret"
+        },
+        "data_description": {
+          "client_id": "Shown in the Pleos Playground under My Vehicle Data API after \"Get API Key\". Copy it without spaces.",
+          "client_secret": "Shown next to the Client ID. It is stored only in your Home Assistant and is hidden here."
+        }
+      },
+      "rename": {
+        "title": "Rename cars / interval",
+        "description": "Change the names of your cars and how often data is fetched. The entities are named after the car name.",
+        "data": {
+          "scan_interval": "How often to fetch data? (minutes)"
+        },
+        "data_description": {
+          "scan_interval": "Default: 10 minutes. Allowed: 5 to 1440 minutes (once a day). The car only sends new data now and then, so very short intervals rarely help."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Renew your API key",
+        "description": "The API key for {brand} is no longer valid. It may have been revoked or has expired.\n\nHow to get a new one:\n1. Open the [Pleos Playground]({url}) › My Vehicle Data API.\n2. Revoke the old key if it is still shown.\n3. Click **Get API Key** and sign in with your {account} login.\n4. Enter the new Client ID and Client Secret here.",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client Secret"
+        },
+        "data_description": {
+          "client_id": "Shown in the Pleos Playground under My Vehicle Data API after \"Get API Key\". Copy it without spaces.",
+          "client_secret": "Shown next to the Client ID. It is stored only in your Home Assistant and is hidden here."
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Client ID or secret are wrong. Copy them again without spaces.",
+      "region_unsupported": "Pleos does not support your region. The personal API key only works for cars in Europe.",
+      "no_vehicles": "The key contains no car. Is the car in your {account} app? Was the key created after that? To get a new key: in the Pleos Playground › My Vehicle Data API, revoke the old key, click \"Get API Key\" again and enter the new key here.",
+      "cannot_connect": "Pleos can't be reached right now. Check your internet connection and try again later.",
+      "unknown": "Something unexpected went wrong. Please try again later. If it keeps happening, check the Home Assistant log.",
+      "vehicle_already_configured": "All cars of this key are already set up in Home Assistant. To use a new key for them, open the existing entry and choose \"Reconfigure\" › \"Change the key\".",
+      "no_vehicle_selected": "Please add at least one car.",
+      "no_new_vehicles": "This key contains no new car. Did you add the car in the app before getting the new key? If not: add it, revoke the key, get a new one and try again.",
+      "wrong_account": "This key does not contain any of your cars that are set up here. Use the key of the same {account} account.",
+      "key_in_use": "This key is already used by another entry of this integration."
+    },
+    "abort": {
+      "already_configured": "This key is already set up. To change it, open the existing entry and choose \"Reconfigure\".",
+      "reconfigure_successful": "Done! Your changes have been saved.",
+      "reauth_successful": "Done! The new key works."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Rename cars / interval",
+        "description": "Change the names of your cars and how often data is fetched. The entities are named after the car name.",
+        "data": {
+          "scan_interval": "How often to fetch data? (minutes)"
+        },
+        "data_description": {
+          "scan_interval": "Default: 10 minutes. Allowed: 5 to 1440 minutes (once a day). The car only sends new data now and then, so very short intervals rarely help."
+        }
+      }
+    }
+  },
+  "selector": {
+    "brand": {
+      "options": {
+        "hyundai": "Hyundai",
+        "kia": "Kia",
+        "genesis": "Genesis"
+      }
+    }
+  },
+  "issues": {
+    "auth_failed": {
+      "title": "The API key for {brand} is no longer valid",
+      "description": "The API key for {brand} is no longer valid – enter it again.\n\nGo to **Settings › Devices & services › Hyundai Kia Genesis (Pleos)** and click **Re-authenticate** (or choose **Reconfigure** › **Change the key**). You can get a new key in the [Pleos Playground]({url}) › My Vehicle Data API."
+    },
+    "vehicle_removed": {
+      "title": "Car {name} is no longer in the key",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Car {name} is no longer in the key",
+            "description": "The car **{name}** (VIN ending in …{vin_tail}) is no longer part of your API key, for example because access was withdrawn or the car was sold.\n\nRemove it from Home Assistant? Its device and entities will be deleted. If the car should stay, get a new key that contains it instead (Reconfigure › Change the key)."
+          }
+        },
+        "abort": {
+          "entry_not_found": "The integration entry for this car no longer exists."
+        }
+      }
+    }
+  }
+}
