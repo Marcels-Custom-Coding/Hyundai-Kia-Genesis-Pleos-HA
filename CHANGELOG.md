@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1] – 2026-10-14
+
+### Behoben / Fixed
+- Entitäten werden jetzt angelegt, sobald das Auto einen Wert liefert – nicht nur beim ersten Abruf. Einmal angelegte Entitäten bleiben erhalten, auch wenn ein Wert zeitweise fehlt.
+  *Entities are now created as soon as the car reports a value, not only on the first refresh. Entities created once are kept even when a value is missing for a while.*
+
+### Geändert / Changed
+- Icon (Kia und Hyundai) für Home Assistant und HACS. / *Icon (Kia and Hyundai) for Home Assistant and HACS.*
+- Länderliste in `hacs.json` (Europa, laut Pleos). / *Country list in `hacs.json` (Europe, per Pleos).*
+
 ## [0.1.0] – 2026-10-14
 
 Erste Version. / First release.
