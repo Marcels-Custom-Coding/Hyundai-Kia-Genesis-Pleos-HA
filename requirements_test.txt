@@ -1,0 +1,3 @@
+# Version passend zur unterstützten Home-Assistant-Version halten.
+pytest-homeassistant-custom-component==0.13.367
+ruff==0.16.10

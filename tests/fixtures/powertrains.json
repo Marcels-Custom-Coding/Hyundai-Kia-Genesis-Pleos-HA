@@ -1,0 +1,28 @@
+{
+  "data": {
+    "engine": {
+      "fuelLevel": null
+    },
+    "batteries": [
+      {
+        "type": "main",
+        "remainRatio": 30.5
+      }
+    ],
+    "distanceToEmpties": [
+      {
+        "type": "EV",
+        "value": "106",
+        "unit": "km"
+      }
+    ],
+    "timestamp": "2025-09-01T00:10:00Z"
+  },
+  "meta": {
+    "code": 200,
+    "message": "Success",
+    "success": "true",
+    "timestamp": "2025-09-01T11:00:00Z",
+    "requestId": "x"
+  }
+}

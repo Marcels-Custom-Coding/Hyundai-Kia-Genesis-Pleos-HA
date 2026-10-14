@@ -1,0 +1,14 @@
+{
+  "domain": "hkg_pleos",
+  "name": "Hyundai Kia Genesis (Pleos)",
+  "codeowners": [
+    "@Marcels-Custom-Coding"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
