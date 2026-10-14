@@ -103,9 +103,7 @@ class PleosCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any] | None]]):
         except PleosAuthError as err:
             raise ConfigEntryAuthFailed("API key no longer accepted") from err
         except PleosVehicleNotFoundError as err:
-            create_vehicle_removed_issue(
-                self.hass, self.config_entry, self.vin, self.vehicle_name
-            )
+            create_vehicle_removed_issue(self.hass, self.config_entry, self.vin, self.vehicle_name)
             raise UpdateFailed("Vehicle is no longer part of the API key") from err
         except PleosConnectionError as err:
             raise UpdateFailed(f"Pleos not reachable: {err}") from err

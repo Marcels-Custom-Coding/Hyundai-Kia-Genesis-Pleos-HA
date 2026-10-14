@@ -86,9 +86,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: PleosConfigEntry) -> boo
 
     for vin, vehicle in entry.data.get(CONF_VEHICLES, {}).items():
         if vin not in available:
-            create_vehicle_removed_issue(
-                hass, entry, vin, vehicle.get(VEHICLE_NAME) or vin[-4:]
-            )
+            create_vehicle_removed_issue(hass, entry, vin, vehicle.get(VEHICLE_NAME) or vin[-4:])
             continue
         ir.async_delete_issue(hass, DOMAIN, vehicle_removed_issue_id(entry.entry_id, vin))
         runtime.coordinators[vin] = PleosCoordinator(hass, entry, client, vin, vehicle)

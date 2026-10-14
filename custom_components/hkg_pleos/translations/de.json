@@ -362,6 +362,27 @@
       },
       "rear_right_seat_heater_on": {
         "name": "Rear Right Seat Heater"
+      },
+      "headlamp_status": {
+        "name": "Headlamp Status"
+      },
+      "turn_signal_left_front": {
+        "name": "Turn Signal Left Front"
+      },
+      "turn_signal_right_front": {
+        "name": "Turn Signal Right Front"
+      },
+      "stop_lamp_left": {
+        "name": "Rear Left Lamp Fault"
+      },
+      "stop_lamp_right": {
+        "name": "Rear Right Lamp Fault"
+      },
+      "turn_signal_left_rear": {
+        "name": "Turn Signal Left Rear"
+      },
+      "turn_signal_right_rear": {
+        "name": "Turn Signal Right Rear"
       }
     },
     "device_tracker": {

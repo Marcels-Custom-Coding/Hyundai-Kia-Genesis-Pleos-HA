@@ -368,6 +368,14 @@ def is_plugged_in(batteries: Mapping[str, Any] | None) -> bool | None:
     return value.lower() == "connected"
 
 
+def status_is(batteries: Mapping[str, Any] | None, expected: str) -> bool | None:
+    """Whether the charge status equals ``expected`` (e.g. v2lOperating)."""
+    status = charging_status(batteries)
+    if status is None:
+        return None
+    return status == expected
+
+
 def status_contains(batteries: Mapping[str, Any] | None, *needles: str) -> bool | None:
     """Whether the charge status mentions one of the needles (v2l, v2x, ...)."""
     status = charging_status(batteries)

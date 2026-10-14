@@ -25,6 +25,9 @@ TOKEN_CODES = frozenset({"401", "4009", "4011", "40002", "40003", "40004"})
 KEY_CODES = frozenset({"40001", "40404"})
 NO_DATA_CODE = "4045"
 NO_PERMISSION_CODE = "5006"
+# Error codes sent with HTTP 400 that mean "this API is not allowed".
+FORBIDDEN_CODES = frozenset({NO_PERMISSION_CODE, "403"})
+SERVER_CODES = frozenset({"5001", "50001", "50201"})
 UNREGISTERED_VEHICLE_CODE = "4101"
 REGION_HINTS = ("region", "country", "not supported in")
 
@@ -146,7 +149,7 @@ class PleosClient:
         )
         if _is_error(status, payload):
             code, message = _error_details(payload)
-            if status == 429 or status >= 500:
+            if status == 429 or status >= 500 or code in SERVER_CODES:
                 raise PleosConnectionError(f"HTTP {status}")
             text = (message or "").lower()
             if status == 451 or any(hint in text for hint in REGION_HINTS):
@@ -191,9 +194,7 @@ class PleosClient:
                 return payload.get("data")
             code, message = _error_details(payload)
             token_problem = status == 401 or code in TOKEN_CODES
-            if attempt == 0 and (
-                token_problem or (status == 403 and code != NO_PERMISSION_CODE)
-            ):
+            if attempt == 0 and (token_problem or (status == 403 and code != NO_PERMISSION_CODE)):
                 # Expired tokens come back as 401, 403 or 40003: log in again.
                 await self._ensure_token(stale=used_token)
                 continue
@@ -201,11 +202,11 @@ class PleosClient:
                 raise PleosNoDataError(path.rsplit("/", 1)[-1])
             if code == UNREGISTERED_VEHICLE_CODE:
                 raise PleosVehicleNotFoundError(code)
-            if code == NO_PERMISSION_CODE or status == 403:
+            if code in FORBIDDEN_CODES or status == 403:
                 raise PleosPermissionError(code or str(status))
             if token_problem:
                 raise PleosAuthError(f"HTTP {status}, code {code}")
-            if status == 429 or status >= 500:
+            if status == 429 or status >= 500 or code in SERVER_CODES:
                 raise PleosConnectionError(f"HTTP {status}")
             raise PleosApiError(status, code, message)
         raise PleosApiError(0, None, "unreachable")  # pragma: no cover
@@ -253,8 +254,9 @@ class PleosClient:
 
 
 def vehicle_display_name(vehicle: dict[str, Any]) -> str:
-    """Name shown in the brand app: nickname, else name, else sellname."""
-    for key in ("nickname", "name", "sellname"):
+    """Name shown in the brand app: nickname, else sellname, else name."""
+    # "name" is the model code (e.g. "UM(UM)"), so it comes last.
+    for key in ("nickname", "sellname", "name"):
         value = vehicle.get(key)
         if isinstance(value, str) and value.strip():
             return value.strip()

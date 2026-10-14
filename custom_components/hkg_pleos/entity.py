@@ -61,9 +61,7 @@ class PleosEntity(CoordinatorEntity[PleosCoordinator]):
     _attr_has_entity_name = True
     entity_description: PleosEntityDescription
 
-    def __init__(
-        self, coordinator: PleosCoordinator, description: PleosEntityDescription
-    ) -> None:
+    def __init__(self, coordinator: PleosCoordinator, description: PleosEntityDescription) -> None:
         """Initialize the entity."""
         super().__init__(coordinator)
         self.entity_description = description

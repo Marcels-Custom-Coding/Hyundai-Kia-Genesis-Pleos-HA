@@ -312,7 +312,7 @@ Entity-IDs folgen dem Muster `<plattform>.<gerätename>_<entitätsname>`. Entit�
 | Entity | Source (Pleos) | Note |
 |---|---|---|
 | EV Battery Level | `batteries.charge.stateOfCharge` | % |
-| EV Battery Capacity | `batteries.charge.batteryCapacity` | Wh, diagnostic |
+| EV Battery Capacity | `batteries.charge.batteryCapacity` | kJ (shown as kWh), diagnostic |
 | AC Charge Limit | `batteries.charge.targetStateOfCharge.standard` | % |
 | DC Charge Limit | `batteries.charge.targetStateOfCharge.quick` | % |
 | Estimated Charge Duration | `batteries.charge.remainTime` | minutes |
@@ -338,7 +338,7 @@ Entity-IDs folgen dem Muster `<plattform>.<gerätename>_<entitätsname>`. Entit�
 |---|---|---|
 | EV Battery Charge | `batteries.charge.charging` | on = charging |
 | EV Battery Plug | `batteries.charge.plugin` | on = connected |
-| V2L status / V2X status | `batteries.charge.status` | EV / PHEV |
+| V2L status / V2X status | `batteries.charge.status` (`v2lOperating` / `v2xOperating`) | EV / PHEV |
 | Engine | `driving.ignition` (ign1) | on = running |
 | Accessory | `driving.ignition` (acc) | |
 | IGN3 | `driving.ignition` (ign3) | |
@@ -350,6 +350,7 @@ Entity-IDs folgen dem Muster `<plattform>.<gerätename>_<entitätsname>`. Entit�
 | Hood / Trunk / Sunroof | `status.hood` / `trunk` / `sunroof` | on = open |
 | Fuel Low Level, Washer Fluid Warning, Smart Key Battery Warning, Brake Fluid Warning, Oil Level Warning | `status.warnings` | problem; fuel/oil not for EV/FCEV |
 | Tire Pressure - All / Front Left / Front Right / Rear Left / Rear Right | `status.warnings` | problem |
+| Headlamp Status, Turn Signal Left/Right Front, Turn Signal Left/Right Rear, Rear Left / Rear Right Lamp Fault (stop lamps) | `status.warnings` (`frontHeadLamp`, `…TurnSignal`, `…StopLamp`) | problem |
 | Air Conditioner | `status.climateControl.status` | |
 | Defrost | `status.windshield.defrost` | |
 | Steering Wheel Heater | `status.steeringWheelHeat` | |

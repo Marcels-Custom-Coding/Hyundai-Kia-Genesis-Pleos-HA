@@ -202,7 +202,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[PleosBinarySensorEntityDescription, ...] = (
         translation_key="ev_v2l_status",
         legacy_key="ev_v2l_status",
         icon="mdi:ev-station",
-        value_fn=lambda c: r.status_contains(_batteries(c), "v2l"),
+        value_fn=lambda c: r.status_is(_batteries(c), "v2lOperating"),
         exists_fn=_v2x_exists,
     ),
     PleosBinarySensorEntityDescription(
@@ -210,7 +210,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[PleosBinarySensorEntityDescription, ...] = (
         translation_key="ev_v2x_status",
         legacy_key="ev_v2x_status",
         icon="mdi:ev-station",
-        value_fn=lambda c: r.status_contains(_batteries(c), "v2x", "v2g", "v2h"),
+        value_fn=lambda c: r.status_is(_batteries(c), "v2xOperating"),
         exists_fn=_v2x_exists,
     ),
     PleosBinarySensorEntityDescription(
@@ -311,6 +311,18 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[PleosBinarySensorEntityDescription, ...] = (
     _tire_warning("front_right", "tirePressureFrontRight"),
     _tire_warning("rear_left", "tirePressureRearLeft"),
     _tire_warning("rear_right", "tirePressureRearRight"),
+    *(
+        _warning(key, name, "mdi:lightbulb-alert-outline", "mdi:lightbulb-outline")
+        for key, name in (
+            ("headlamp_status", "frontHeadLamp"),
+            ("turn_signal_left_front", "frontLeftTurnSignal"),
+            ("turn_signal_right_front", "frontRightTurnSignal"),
+            ("stop_lamp_left", "rearLeftStopLamp"),
+            ("stop_lamp_right", "rearRightStopLamp"),
+            ("turn_signal_left_rear", "rearLeftTurnSignal"),
+            ("turn_signal_right_rear", "rearRightTurnSignal"),
+        )
+    ),
     PleosBinarySensorEntityDescription(
         key="air_control_is_on",
         translation_key="air_control_is_on",
