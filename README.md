@@ -3,6 +3,7 @@
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![Validate](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/actions/workflows/validate.yml/badge.svg)](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/marcels.custom)
 
 Home Assistant integration for Hyundai, Kia and Genesis vehicles using the official **Pleos Vehicle Data API**.
 
@@ -400,6 +401,13 @@ Entity-IDs folgen dem Muster `<plattform>.<gerätename>_<entitätsname>`. Entit�
 
 Screenshots referenced above (`<!-- Screenshot: … -->`) belong in [`docs/images/`](docs/images/). /
 Die oben markierten Screenshots gehören nach `docs/images/`.
+
+## Unterstützen / Support
+
+Die Integration ist kostenlos und bleibt es. Wenn sie dir gefällt, kannst du mir freiwillig einen Kaffee spendieren – es gibt dafür keine Gegenleistung, alle Funktionen sind für alle gleich.
+*The integration is free and stays free. If you like it, you can buy me a coffee – voluntarily, nothing extra in return, all features are the same for everyone.*
+
+<a href="https://buymeacoffee.com/marcels.custom"><img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=%E2%98%95&slug=marcels.custom&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" alt="Buy me a coffee" height="45"></a>
 
 ## License / Lizenz
 
