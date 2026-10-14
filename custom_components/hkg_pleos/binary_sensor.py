@@ -18,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import readings as r
 from .const import TYPE_EV, TYPE_PHEV, TYPES_WITHOUT_FUEL
 from .coordinator import PleosConfigEntry, PleosCoordinator
-from .entity import PleosEntity, PleosEntityDescription
+from .entity import PleosEntity, PleosEntityDescription, async_add_vehicle_entities
 
 PARALLEL_UPDATES = 0
 
@@ -372,11 +372,14 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the binary sensors of all vehicles."""
-    async_add_entities(
-        PleosBinarySensor(coordinator, description)
-        for coordinator in entry.runtime_data.coordinators.values()
-        for description in BINARY_SENSOR_DESCRIPTIONS
-        if binary_sensor_exists(description, coordinator)
+    async_add_vehicle_entities(
+        hass,
+        entry,
+        "binary_sensor",
+        async_add_entities,
+        descriptions=BINARY_SENSOR_DESCRIPTIONS,
+        exists=binary_sensor_exists,
+        factory=PleosBinarySensor,
     )
 
 

@@ -16,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import readings as r
 from .coordinator import PleosConfigEntry, PleosCoordinator
-from .entity import PleosEntity, PleosEntityDescription
+from .entity import PleosEntity, PleosEntityDescription, async_add_vehicle_entities
 
 PARALLEL_UPDATES = 0
 
@@ -62,11 +62,14 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the location trackers of all vehicles."""
-    async_add_entities(
-        PleosTracker(coordinator, description)
-        for coordinator in entry.runtime_data.coordinators.values()
-        for description in TRACKER_DESCRIPTIONS
-        if tracker_exists(description, coordinator)
+    async_add_vehicle_entities(
+        hass,
+        entry,
+        "device_tracker",
+        async_add_entities,
+        descriptions=TRACKER_DESCRIPTIONS,
+        exists=tracker_exists,
+        factory=PleosTracker,
     )
 
 

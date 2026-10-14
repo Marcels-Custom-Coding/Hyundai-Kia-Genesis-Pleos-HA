@@ -21,7 +21,7 @@ from homeassistant.helpers.typing import StateType
 from . import readings as r
 from .const import TYPES_WITHOUT_FUEL
 from .coordinator import PleosConfigEntry, PleosCoordinator
-from .entity import PleosEntity, PleosEntityDescription
+from .entity import PleosEntity, PleosEntityDescription, async_add_vehicle_entities
 
 PARALLEL_UPDATES = 0
 
@@ -282,11 +282,14 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the sensors of all vehicles."""
-    async_add_entities(
-        PleosSensor(coordinator, description)
-        for coordinator in entry.runtime_data.coordinators.values()
-        for description in SENSOR_DESCRIPTIONS
-        if sensor_exists(description, coordinator)
+    async_add_vehicle_entities(
+        hass,
+        entry,
+        "sensor",
+        async_add_entities,
+        descriptions=SENSOR_DESCRIPTIONS,
+        exists=sensor_exists,
+        factory=PleosSensor,
     )
 
 
