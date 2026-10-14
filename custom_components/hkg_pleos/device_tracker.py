@@ -1,26 +1,59 @@
-"""Position of the car."""
+"""GPS location of a Pleos vehicle."""
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from dataclasses import dataclass
 from typing import Any
 
-from homeassistant.components.device_tracker import SourceType, TrackerEntity
+from homeassistant.components.device_tracker import (
+    SourceType,
+    TrackerEntity,
+    TrackerEntityDescription,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from . import data as d
+from . import readings as r
 from .coordinator import PleosConfigEntry, PleosCoordinator
-from .data import VehicleData
-from .entity import PleosEntity, async_add_when_available
+from .entity import PleosEntity, PleosEntityDescription
 
 PARALLEL_UPDATES = 0
 
-# kia_uvo key, also used as our key so the take-over finds it.
-LOCATION_KEY = "location"
+
+@dataclass(frozen=True, kw_only=True)
+class PleosTrackerEntityDescription(TrackerEntityDescription, PleosEntityDescription):
+    """Describes the Pleos location tracker."""
+
+    value_fn: Callable[[PleosCoordinator], dict[str, Any] | None]
 
 
-def _has_position(_: object, data: VehicleData) -> bool:
-    return d.get(data, "locations", "location", "latitude") is not None
+def _locations(coordinator: PleosCoordinator) -> dict[str, Any] | None:
+    block = (coordinator.data or {}).get("locations")
+    return block if isinstance(block, dict) else None
+
+
+TRACKER_DESCRIPTIONS: tuple[PleosTrackerEntityDescription, ...] = (
+    PleosTrackerEntityDescription(
+        key="location",
+        translation_key="location",
+        legacy_key="location",
+        icon="mdi:map-marker-outline",
+        value_fn=lambda c: r.valid_location(_locations(c)),
+        # Created when the vehicle reports a location block at all; a fix
+        # outside WGS84 or out of range only makes the state unknown.
+        exists_fn=lambda c: isinstance(r.get(_locations(c), "location"), dict),
+    ),
+)
+
+
+def tracker_exists(
+    description: PleosTrackerEntityDescription, coordinator: PleosCoordinator
+) -> bool:
+    """Whether the tracker is created for this vehicle."""
+    if description.exists_fn is not None:
+        return description.exists_fn(coordinator)
+    return description.value_fn(coordinator) is not None
 
 
 async def async_setup_entry(
@@ -28,44 +61,49 @@ async def async_setup_entry(
     entry: PleosConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Set up one tracker per car."""
-    async_add_when_available(
-        entry,
-        async_add_entities,
-        (LOCATION_KEY,),
-        _has_position,
-        lambda coordinator, _: PleosTracker(coordinator),
+    """Set up the location trackers of all vehicles."""
+    async_add_entities(
+        PleosTracker(coordinator, description)
+        for coordinator in entry.runtime_data.coordinators.values()
+        for description in TRACKER_DESCRIPTIONS
+        if tracker_exists(description, coordinator)
     )
 
 
 class PleosTracker(PleosEntity, TrackerEntity):
-    """GPS position from /locations."""
+    """Vehicle position."""
 
-    _attr_translation_key = LOCATION_KEY
-    _attr_icon = "mdi:map-marker-outline"
+    entity_description: PleosTrackerEntityDescription
     _attr_source_type = SourceType.GPS
 
-    def __init__(self, coordinator: PleosCoordinator) -> None:
-        super().__init__(coordinator, LOCATION_KEY)
+    @property
+    def _location(self) -> dict[str, Any] | None:
+        return self.entity_description.value_fn(self.coordinator)
 
     @property
     def latitude(self) -> float | None:
-        return d.number(d.get(self.vehicle_data, "locations", "location", "latitude"))
+        """Return the latitude."""
+        if (location := self._location) is None:
+            return None
+        return r.parse_number(location.get("latitude"))
 
     @property
     def longitude(self) -> float | None:
-        return d.number(d.get(self.vehicle_data, "locations", "location", "longitude"))
+        """Return the longitude."""
+        if (location := self._location) is None:
+            return None
+        return r.parse_number(location.get("longitude"))
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        location = d.get(self.vehicle_data, "locations", "location") or {}
-        speed = location.get("speed") or {}
-        attributes: dict[str, Any] = {
-            "altitude": location.get("altitude"),
-            "heading": location.get("heading"),
-            "speed": speed.get("value"),
-            "speed_unit": d.SPEED_UNITS.get(speed.get("unit") or ""),
+        """Return altitude, heading, speed and time of the fix."""
+        location = self._location or {}
+        speed = r.get(location, "speed")
+        timestamp = r.parse_timestamp(r.get(_locations(self.coordinator), "timestamp"))
+        return {
+            "altitude": r.parse_number(r.get(location, "altitude")),
+            "heading": r.parse_number(r.get(location, "heading")),
+            "speed": r.measured_value(speed),
+            "speed_unit": r.speed_unit(r.get(speed, "unit")),
+            "last_update": timestamp.isoformat() if timestamp else None,
         }
-        if stamp := d.timestamp(self.vehicle_data, "locations"):
-            attributes["last_updated_at"] = stamp.isoformat()
-        return {k: v for k, v in attributes.items() if v is not None}

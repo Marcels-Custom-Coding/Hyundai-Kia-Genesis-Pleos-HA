@@ -1,9 +1,10 @@
-"""Binary sensors. Keys and names follow the Hyundai / Kia Connect integration."""
+"""Binary sensors of a Pleos vehicle."""
 
 from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -14,295 +15,355 @@ from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from . import data as d
+from . import readings as r
+from .const import TYPE_EV, TYPE_PHEV, TYPES_WITHOUT_FUEL
 from .coordinator import PleosConfigEntry, PleosCoordinator
-from .data import VehicleData
-from .entity import PleosEntity, async_add_when_available
+from .entity import PleosEntity, PleosEntityDescription
 
 PARALLEL_UPDATES = 0
 
+DIAGNOSTIC = EntityCategory.DIAGNOSTIC
+
 
 @dataclass(frozen=True, kw_only=True)
-class PleosBinarySensorEntityDescription(BinarySensorEntityDescription):
-    """Binary sensor with the value source and icons like kia_uvo."""
+class PleosBinarySensorEntityDescription(BinarySensorEntityDescription, PleosEntityDescription):
+    """Describes a Pleos binary sensor."""
 
-    is_on_fn: Callable[[VehicleData], bool | None]
+    value_fn: Callable[[PleosCoordinator], bool | None]
     on_icon: str | None = None
     off_icon: str | None = None
-    # Key of the matching kia_uvo entity (end of its unique_id), for take-over.
-    uvo_key: str | None = None
-    # Only create the entity when this also has a value (e.g. fuel warning on EVs).
-    requires_fn: Callable[[VehicleData], object] | None = None
 
 
-def _diag(
-    key: str,
-    is_on_fn: Callable[[VehicleData], bool | None],
-    *,
-    device_class: BinarySensorDeviceClass | None = None,
-    on_icon: str | None = None,
-    off_icon: str | None = None,
-    uvo: bool = True,
+def _block(coordinator: PleosCoordinator, endpoint: str) -> dict[str, Any] | None:
+    data = coordinator.data or {}
+    block = data.get(endpoint)
+    return block if isinstance(block, dict) else None
+
+
+def _batteries(coordinator: PleosCoordinator) -> dict[str, Any] | None:
+    return _block(coordinator, "batteries")
+
+
+def _driving(coordinator: PleosCoordinator) -> dict[str, Any] | None:
+    return _block(coordinator, "driving")
+
+
+def _status(coordinator: PleosCoordinator) -> dict[str, Any] | None:
+    return _block(coordinator, "status")
+
+
+def _has_charge(coordinator: PleosCoordinator) -> bool:
+    return isinstance(r.get(_batteries(coordinator), "charge"), dict)
+
+
+def _bool(value: Any) -> bool | None:
+    return value if isinstance(value, bool) else None
+
+
+def _is_locked(coordinator: PleosCoordinator) -> bool | None:
+    """Lock class: on = unlocked. Off only when every known door is locked."""
+    states = r.door_states(_status(coordinator))
+    if not states:
+        return None
+    return not all(state == "locked" for state in states)
+
+
+def _door_open(row: str, side: str) -> PleosBinarySensorEntityDescription:
+    key = f"{row}_{side}_door_is_open"
+    return PleosBinarySensorEntityDescription(
+        key=key,
+        translation_key=key,
+        legacy_key=key,
+        device_class=BinarySensorDeviceClass.DOOR,
+        entity_category=DIAGNOSTIC,
+        on_icon="mdi:car-door",
+        off_icon="mdi:car-door",
+        value_fn=lambda c: r.is_open(r.door_state(_status(c), row, side)),
+    )
+
+
+def _door_lock(row: str, side: str) -> PleosBinarySensorEntityDescription:
+    key = f"{row}_{side}_door_is_locked"
+
+    def value(coordinator: PleosCoordinator) -> bool | None:
+        state = r.door_state(_status(coordinator), row, side)
+        return None if state is None else state != "locked"
+
+    return PleosBinarySensorEntityDescription(
+        key=key,
+        translation_key=key,
+        legacy_key=key,
+        device_class=BinarySensorDeviceClass.LOCK,
+        entity_category=DIAGNOSTIC,
+        on_icon="mdi:lock-open",
+        off_icon="mdi:lock",
+        value_fn=value,
+    )
+
+
+def _opening(
+    key: str, field: str, device_class: BinarySensorDeviceClass, icon: str
 ) -> PleosBinarySensorEntityDescription:
     return PleosBinarySensorEntityDescription(
         key=key,
         translation_key=key,
-        uvo_key=key if uvo else None,
+        legacy_key=key,
         device_class=device_class,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        on_icon=on_icon,
-        off_icon=off_icon or on_icon,
-        is_on_fn=is_on_fn,
+        entity_category=DIAGNOSTIC,
+        on_icon=icon,
+        off_icon=icon,
+        value_fn=lambda c: r.is_open(r.get(_status(c), field)),
     )
-
-
-DOOR_POSITIONS = {
-    "front_left": ("front", "left"),
-    "front_right": ("front", "right"),
-    "back_left": ("rear", "left"),
-    "back_right": ("rear", "right"),
-}
-SEAT_POSITIONS = {
-    "front_left": ("front", "left"),
-    "front_right": ("front", "right"),
-    "rear_left": ("rear", "left"),
-    "rear_right": ("rear", "right"),
-}
-LAMP = "mdi:lightbulb-alert-outline"
-LAMP_OK = "mdi:lightbulb-outline"
-TIRE = "mdi:car-tire-alert"
-
-
-def _doors() -> list[PleosBinarySensorEntityDescription]:
-    result = []
-    for name, (row, side) in DOOR_POSITIONS.items():
-        result.append(
-            _diag(
-                f"{name}_door_is_open",
-                lambda data, row=row, side=side: d.door_open(data, row, side),
-                device_class=BinarySensorDeviceClass.DOOR,
-                on_icon="mdi:car-door",
-            )
-        )
-        result.append(
-            _diag(
-                f"{name}_door_is_locked",
-                lambda data, row=row, side=side: d.door_unlocked(data, row, side),
-                device_class=BinarySensorDeviceClass.LOCK,
-                on_icon="mdi:lock-open",
-                off_icon="mdi:lock",
-            )
-        )
-    return result
-
-
-def _seats() -> list[PleosBinarySensorEntityDescription]:
-    return [
-        _diag(
-            f"{name}_seat_heater_on",
-            lambda data, row=row, side=side: (
-                None
-                if (heat := d.seat(data, row, side, "heat")) is None
-                else heat != "off"
-            ),
-            on_icon="mdi:seat-heater",
-            off_icon="mdi:seat-outline",
-        )
-        for name, (row, side) in SEAT_POSITIONS.items()
-    ]
 
 
 def _warning(
-    key: str, *names: str, icon: str, off_icon: str | None = None, problem: bool = True
+    key: str,
+    name: str,
+    on_icon: str,
+    off_icon: str,
+    *,
+    device_class: BinarySensorDeviceClass | None = BinarySensorDeviceClass.PROBLEM,
+    needs_fuel: bool = False,
 ) -> PleosBinarySensorEntityDescription:
-    return _diag(
-        key,
-        lambda data: d.warning(data, *names),
-        device_class=BinarySensorDeviceClass.PROBLEM if problem else None,
-        on_icon=icon,
+    def exists(coordinator: PleosCoordinator) -> bool:
+        if needs_fuel and coordinator.vehicle_type in TYPES_WITHOUT_FUEL:
+            return False
+        return r.warnings_list(_status(coordinator)) is not None
+
+    return PleosBinarySensorEntityDescription(
+        key=key,
+        translation_key=key,
+        legacy_key=key,
+        device_class=device_class,
+        entity_category=DIAGNOSTIC,
+        on_icon=on_icon,
         off_icon=off_icon,
+        value_fn=lambda c: r.has_warning(_status(c), name),
+        exists_fn=exists,
     )
 
 
-BINARY_SENSORS: tuple[PleosBinarySensorEntityDescription, ...] = (
-    # Charging
+def _tire_warning(position: str, name: str) -> PleosBinarySensorEntityDescription:
+    return _warning(
+        f"tire_pressure_{position}_warning_is_on",
+        name,
+        "mdi:car-tire-alert",
+        "mdi:car-tire-alert",
+    )
+
+
+def _seat_heater(row: str, side: str) -> PleosBinarySensorEntityDescription:
+    key = f"{row}_{side}_seat_heater_on"
+    return PleosBinarySensorEntityDescription(
+        key=key,
+        translation_key=key,
+        legacy_key=key,
+        entity_category=DIAGNOSTIC,
+        on_icon="mdi:seat-heater",
+        off_icon="mdi:seat-outline",
+        value_fn=lambda c: r.is_active_level(r.seat_heat(_status(c), row, side)),
+    )
+
+
+def _v2x_exists(coordinator: PleosCoordinator) -> bool:
+    return (
+        coordinator.vehicle_type in (TYPE_EV, TYPE_PHEV)
+        and r.charging_status(_batteries(coordinator)) is not None
+    )
+
+
+BINARY_SENSOR_DESCRIPTIONS: tuple[PleosBinarySensorEntityDescription, ...] = (
     PleosBinarySensorEntityDescription(
         key="ev_battery_is_charging",
         translation_key="ev_battery_is_charging",
-        uvo_key="ev_battery_is_charging",
+        legacy_key="ev_battery_is_charging",
+        icon="mdi:ev-station",
         device_class=BinarySensorDeviceClass.BATTERY_CHARGING,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        is_on_fn=lambda data: d.charge(data, "charging"),
+        entity_category=DIAGNOSTIC,
+        value_fn=lambda c: r.is_charging(_batteries(c)),
+        exists_fn=lambda c: r.is_charging(_batteries(c)) is not None,
     ),
     PleosBinarySensorEntityDescription(
         key="ev_battery_is_plugged_in",
         translation_key="ev_battery_is_plugged_in",
-        uvo_key="ev_battery_is_plugged_in",
+        legacy_key="ev_battery_is_plugged_in",
+        icon="mdi:power-plug",
         device_class=BinarySensorDeviceClass.PLUG,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        is_on_fn=d.plugged_in,
+        entity_category=DIAGNOSTIC,
+        value_fn=lambda c: r.is_plugged_in(_batteries(c)),
+        # "invalid" while asleep is possible; the charge block shows support.
+        exists_fn=lambda c: (
+            r.is_plugged_in(_batteries(c)) is not None
+            or (_has_charge(c) and c.vehicle_type in (TYPE_EV, TYPE_PHEV))
+        ),
     ),
     PleosBinarySensorEntityDescription(
         key="ev_v2l_status",
         translation_key="ev_v2l_status",
-        uvo_key="ev_v2l_status",
+        legacy_key="ev_v2l_status",
         icon="mdi:ev-station",
-        is_on_fn=lambda data: d.charge_status_is(data, "v2lOperating"),
+        value_fn=lambda c: r.status_is(_batteries(c), "v2lOperating"),
+        exists_fn=_v2x_exists,
     ),
     PleosBinarySensorEntityDescription(
         key="ev_v2x_status",
         translation_key="ev_v2x_status",
-        uvo_key="ev_v2x_status",
+        legacy_key="ev_v2x_status",
         icon="mdi:ev-station",
-        is_on_fn=lambda data: d.charge_status_is(data, "v2xOperating"),
+        value_fn=lambda c: r.status_is(_batteries(c), "v2xOperating"),
+        exists_fn=_v2x_exists,
     ),
-    # Driving
-    _diag(
-        "engine_is_running",
-        lambda data: d.flag(d.get(data, "driving", "ignition", "status")),
+    PleosBinarySensorEntityDescription(
+        key="engine_is_running",
+        translation_key="engine_is_running",
+        legacy_key="engine_is_running",
+        entity_category=DIAGNOSTIC,
         on_icon="mdi:engine",
         off_icon="mdi:engine-off",
+        value_fn=lambda c: r.engine_running(_driving(c)),
     ),
-    _diag(
-        "accessory_on",
-        lambda data: d.ignition(data, "acc"),
+    PleosBinarySensorEntityDescription(
+        key="accessory_on",
+        translation_key="accessory_on",
+        legacy_key="accessory_on",
+        entity_category=DIAGNOSTIC,
         on_icon="mdi:car-key",
         off_icon="mdi:car-off",
+        value_fn=lambda c: r.is_on(r.ignition_detail(_driving(c), "acc")),
     ),
-    _diag(
-        "ign3",
-        lambda data: d.ignition(data, "ign3"),
+    PleosBinarySensorEntityDescription(
+        key="ign3",
+        translation_key="ign3",
+        legacy_key="ign3",
+        entity_category=DIAGNOSTIC,
         on_icon="mdi:key",
         off_icon="mdi:car-off",
+        value_fn=lambda c: r.is_on(r.ignition_detail(_driving(c), "ign3")),
     ),
-    _diag(
-        "sleep_mode_check",
-        lambda data: d.flag(d.get(data, "driving", "sleepMode")),
+    PleosBinarySensorEntityDescription(
+        key="sleep_mode_check",
+        translation_key="sleep_mode_check",
+        legacy_key="sleep_mode_check",
+        entity_category=DIAGNOSTIC,
         on_icon="mdi:sleep",
         off_icon="mdi:sleep-off",
+        value_fn=lambda c: r.is_on(r.get(_driving(c), "sleepMode")),
     ),
-    _diag(
-        "transmission_condition",
-        lambda data: d.get(data, "driving", "transmission", "parkingPosition"),
+    PleosBinarySensorEntityDescription(
+        key="transmission_condition",
+        translation_key="transmission_condition",
+        legacy_key="transmission_condition",
+        entity_category=DIAGNOSTIC,
         on_icon="mdi:car-shift-pattern",
         off_icon="mdi:car",
+        value_fn=lambda c: _bool(r.get(_driving(c), "transmission", "parkingPosition")),
     ),
-    # Doors, lids, lock
-    *_doors(),
+    _door_open("front", "left"),
+    _door_open("front", "right"),
+    _door_open("back", "left"),
+    _door_open("back", "right"),
+    _door_lock("front", "left"),
+    _door_lock("front", "right"),
+    _door_lock("back", "left"),
+    _door_lock("back", "right"),
     PleosBinarySensorEntityDescription(
         key="is_locked",
         translation_key="is_locked",
-        uvo_key="is_locked",
+        legacy_key="is_locked",
         device_class=BinarySensorDeviceClass.LOCK,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        is_on_fn=d.any_door_unlocked,
+        entity_category=DIAGNOSTIC,
+        on_icon="mdi:lock-open",
+        off_icon="mdi:lock",
+        value_fn=_is_locked,
     ),
-    _diag(
-        "hood_is_open",
-        lambda data: d.flag(d.get(data, "status", "hood"), "open"),
-        device_class=BinarySensorDeviceClass.DOOR,
-        on_icon="mdi:car",
-    ),
-    _diag(
-        "trunk_is_open",
-        lambda data: d.flag(d.get(data, "status", "trunk"), "open"),
-        device_class=BinarySensorDeviceClass.DOOR,
-        on_icon="mdi:car-back",
-    ),
-    _diag(
-        "sunroof_is_open",
-        lambda data: d.flag(d.get(data, "status", "sunroof"), "open"),
-        device_class=BinarySensorDeviceClass.WINDOW,
-        on_icon="mdi:window-closed",
-    ),
-    # Climate
-    _diag(
-        "air_control_is_on",
-        lambda data: d.flag(d.get(data, "status", "climateControl", "status")),
-        on_icon="mdi:air-conditioner",
-    ),
-    _diag(
-        "defrost_is_on",
-        lambda data: d.flag(d.get(data, "status", "windshield", "defrost")),
-        on_icon="mdi:car-defrost-front",
-    ),
-    _diag(
-        "steering_wheel_heater_is_on",
-        lambda data: d.flag(d.get(data, "status", "steeringWheelHeat")),
-        on_icon="mdi:steering",
-    ),
-    *_seats(),
-    # Warning lights
-    PleosBinarySensorEntityDescription(
-        key="fuel_level_is_low",
-        translation_key="fuel_level_is_low",
-        uvo_key="fuel_level_is_low",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        on_icon="mdi:gas-station-off",
-        off_icon="mdi:gas-station",
-        is_on_fn=lambda data: d.warning(data, "lowFuel"),
-        requires_fn=lambda data: d.get(data, "powertrains", "engine", "fuelLevel"),
-    ),
-    PleosBinarySensorEntityDescription(
-        key="smart_key_battery_warning_is_on",
-        translation_key="smart_key_battery_warning_is_on",
-        uvo_key="smart_key_battery_warning_is_on",
-        device_class=BinarySensorDeviceClass.BATTERY,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        on_icon="mdi:battery-alert",
-        off_icon="mdi:battery",
-        is_on_fn=lambda data: d.warning(data, "smartKeyBattery"),
-    ),
+    _opening("hood_is_open", "hood", BinarySensorDeviceClass.DOOR, "mdi:car"),
+    _opening("trunk_is_open", "trunk", BinarySensorDeviceClass.DOOR, "mdi:car-back"),
+    _opening("sunroof_is_open", "sunroof", BinarySensorDeviceClass.WINDOW, "mdi:window-closed"),
     _warning(
-        "washer_fluid_warning_is_on",
-        "washFluid",
-        icon="mdi:wiper-wash-alert",
-        off_icon="mdi:wiper-wash",
+        "fuel_level_is_low",
+        "lowFuel",
+        "mdi:gas-station-off",
+        "mdi:gas-station",
+        needs_fuel=True,
+    ),
+    _warning("washer_fluid_warning_is_on", "washFluid", "mdi:wiper-wash-alert", "mdi:wiper-wash"),
+    _warning(
+        "smart_key_battery_warning_is_on",
+        "smartKeyBattery",
+        "mdi:battery-alert",
+        "mdi:battery",
+        device_class=BinarySensorDeviceClass.BATTERY,
     ),
     _warning(
         "brake_fluid_warning_is_on",
         "brakeOil",
-        icon="mdi:car-brake-alert",
-        off_icon="mdi:car-brake-fluid-level",
+        "mdi:car-brake-alert",
+        "mdi:car-brake-fluid-level",
     ),
-    _warning("oil_level_warning_is_on", "engineOil", icon="mdi:oil"),
-    _warning("tire_pressure_all_warning_is_on", "tirePressureLow", icon=TIRE),
+    _warning("oil_level_warning_is_on", "engineOil", "mdi:oil", "mdi:oil", needs_fuel=True),
     _warning(
-        "tire_pressure_front_left_warning_is_on", "tirePressureFrontLeft", icon=TIRE
+        "tire_pressure_all_warning_is_on",
+        "tirePressureLow",
+        "mdi:car-tire-alert",
+        "mdi:car-tire-alert",
     ),
-    _warning(
-        "tire_pressure_front_right_warning_is_on", "tirePressureFrontRight", icon=TIRE
+    _tire_warning("front_left", "tirePressureFrontLeft"),
+    _tire_warning("front_right", "tirePressureFrontRight"),
+    _tire_warning("rear_left", "tirePressureRearLeft"),
+    _tire_warning("rear_right", "tirePressureRearRight"),
+    *(
+        _warning(key, name, "mdi:lightbulb-alert-outline", "mdi:lightbulb-outline")
+        for key, name in (
+            ("headlamp_status", "frontHeadLamp"),
+            ("turn_signal_left_front", "frontLeftTurnSignal"),
+            ("turn_signal_right_front", "frontRightTurnSignal"),
+            ("stop_lamp_left", "rearLeftStopLamp"),
+            ("stop_lamp_right", "rearRightStopLamp"),
+            ("turn_signal_left_rear", "rearLeftTurnSignal"),
+            ("turn_signal_right_rear", "rearRightTurnSignal"),
+        )
     ),
-    _warning(
-        "tire_pressure_rear_left_warning_is_on", "tirePressureRearLeft", icon=TIRE
+    PleosBinarySensorEntityDescription(
+        key="air_control_is_on",
+        translation_key="air_control_is_on",
+        legacy_key="air_control_is_on",
+        entity_category=DIAGNOSTIC,
+        on_icon="mdi:air-conditioner",
+        off_icon="mdi:air-conditioner",
+        value_fn=lambda c: r.is_on(r.get(_status(c), "climateControl", "status")),
     ),
-    _warning(
-        "tire_pressure_rear_right_warning_is_on", "tirePressureRearRight", icon=TIRE
+    PleosBinarySensorEntityDescription(
+        key="defrost_is_on",
+        translation_key="defrost_is_on",
+        legacy_key="defrost_is_on",
+        entity_category=DIAGNOSTIC,
+        on_icon="mdi:car-defrost-front",
+        off_icon="mdi:car-defrost-front",
+        value_fn=lambda c: r.is_on(r.get(_status(c), "windshield", "defrost")),
     ),
-    _warning("headlamp_status", "frontHeadLamp", icon=LAMP, off_icon=LAMP_OK),
-    _warning(
-        "turn_signal_left_front", "frontLeftTurnSignal", icon=LAMP, off_icon=LAMP_OK
+    PleosBinarySensorEntityDescription(
+        key="steering_wheel_heater_is_on",
+        translation_key="steering_wheel_heater_is_on",
+        legacy_key="steering_wheel_heater_is_on",
+        entity_category=DIAGNOSTIC,
+        on_icon="mdi:steering",
+        off_icon="mdi:steering",
+        value_fn=lambda c: r.is_active_level(r.get(_status(c), "steeringWheelHeat")),
     ),
-    _warning(
-        "turn_signal_right_front", "frontRightTurnSignal", icon=LAMP, off_icon=LAMP_OK
-    ),
-    _warning(
-        "turn_signal_left_rear", "rearLeftTurnSignal", icon=LAMP, off_icon=LAMP_OK
-    ),
-    _warning(
-        "turn_signal_right_rear", "rearRightTurnSignal", icon=LAMP, off_icon=LAMP_OK
-    ),
-    _warning("stop_lamp_left", "rearLeftStopLamp", icon=LAMP, off_icon=LAMP_OK),
-    _warning("stop_lamp_right", "rearRightStopLamp", icon=LAMP, off_icon=LAMP_OK),
+    _seat_heater("front", "left"),
+    _seat_heater("front", "right"),
+    _seat_heater("rear", "left"),
+    _seat_heater("rear", "right"),
 )
 
 
-def _has_value(
-    description: PleosBinarySensorEntityDescription, data: VehicleData
+def binary_sensor_exists(
+    description: PleosBinarySensorEntityDescription, coordinator: PleosCoordinator
 ) -> bool:
-    if description.requires_fn is not None and description.requires_fn(data) is None:
-        return False
-    return description.is_on_fn(data) is not None
+    """Whether the binary sensor is created for this vehicle."""
+    if description.exists_fn is not None:
+        return description.exists_fn(coordinator)
+    return description.value_fn(coordinator) is not None
 
 
 async def async_setup_entry(
@@ -310,36 +371,32 @@ async def async_setup_entry(
     entry: PleosConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Set up the binary sensors of all cars."""
-    async_add_when_available(
-        entry,
-        async_add_entities,
-        BINARY_SENSORS,
-        _has_value,
-        PleosBinarySensor,
+    """Set up the binary sensors of all vehicles."""
+    async_add_entities(
+        PleosBinarySensor(coordinator, description)
+        for coordinator in entry.runtime_data.coordinators.values()
+        for description in BINARY_SENSOR_DESCRIPTIONS
+        if binary_sensor_exists(description, coordinator)
     )
 
 
 class PleosBinarySensor(PleosEntity, BinarySensorEntity):
-    """An on/off value read from Pleos."""
+    """A binary state of a vehicle."""
 
     entity_description: PleosBinarySensorEntityDescription
 
-    def __init__(
-        self,
-        coordinator: PleosCoordinator,
-        description: PleosBinarySensorEntityDescription,
-    ) -> None:
-        super().__init__(coordinator, description.key)
-        self.entity_description = description
-
     @property
     def is_on(self) -> bool | None:
-        return self.entity_description.is_on_fn(self.vehicle_data)
+        """Return the state, None when unknown."""
+        try:
+            return self.entity_description.value_fn(self.coordinator)
+        except (KeyError, IndexError, TypeError, ValueError):
+            return None
 
     @property
     def icon(self) -> str | None:
+        """Return the state dependent icon."""
         description = self.entity_description
-        if description.on_icon is None:
-            return description.icon
+        if description.on_icon is None or description.off_icon is None:
+            return super().icon
         return description.on_icon if self.is_on else description.off_icon

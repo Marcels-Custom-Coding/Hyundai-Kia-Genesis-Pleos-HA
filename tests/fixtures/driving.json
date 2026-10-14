@@ -1,37 +1,16 @@
 {
   "data": {
     "ignition": {
-      "status": "on",
+      "status": "off",
       "ignitionDetails": [
-        {
-          "type": "ign1",
-          "status": "on"
-        },
-        {
-          "type": "ign3",
-          "status": "on"
-        },
-        {
-          "type": "acc",
-          "status": "on"
-        }
+        {"type": "ign1", "status": "off"},
+        {"type": "ign3", "status": "on"},
+        {"type": "acc", "status": "off"}
       ]
     },
     "sleepMode": "off",
-    "odometer": {
-      "value": 6549.2,
-      "unit": "km"
-    },
-    "transmission": {
-      "parkingPosition": false
-    },
-    "timestamp": "2025-09-01T09:10:00Z"
-  },
-  "meta": {
-    "code": 200,
-    "message": "Success",
-    "success": "true",
-    "timestamp": "2025-09-01T11:00:00Z",
-    "requestId": "x"
+    "odometer": {"value": 1000, "unit": "km"},
+    "transmission": {"parkingPosition": true},
+    "timestamp": "2026-01-01T00:00:00Z"
   }
 }

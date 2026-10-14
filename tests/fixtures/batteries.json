@@ -2,23 +2,13 @@
   "data": {
     "charge": {
       "plugin": "connected",
-      "status": "fastCharging",
+      "status": "charging",
       "charging": true,
-      "stateOfCharge": 30.5,
+      "stateOfCharge": 40,
       "batteryCapacity": 273960,
-      "targetStateOfCharge": {
-        "standard": 100,
-        "quick": 80
-      },
-      "remainTime": 54
+      "targetStateOfCharge": {"standard": 80, "quick": 90},
+      "remainTime": 10
     },
-    "timestamp": "2025-09-01T00:10:00Z"
-  },
-  "meta": {
-    "code": 200,
-    "message": "Success",
-    "success": "true",
-    "timestamp": "2025-09-01T11:00:00Z",
-    "requestId": "x"
+    "timestamp": "2026-01-01T00:00:00Z"
   }
 }

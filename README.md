@@ -1,166 +1,377 @@
-# Hyundai Kia Genesis (Pleos)
+# Hyundai Kia Genesis (Pleos) - EU
 
-[Deutsch](#deutsch) · [English](#english)
+[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![Validate](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/actions/workflows/validate.yml/badge.svg)](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Home Assistant integration for Hyundai, Kia and Genesis vehicles using the official **Pleos Vehicle Data API**.
+
+**[Deutsch](#deutsch)** · **[English](#english)** · **[Entitäten / Entities](#entitäten--entities)**
 
 ---
 
 ## Deutsch
 
-Diese Integration holt die Daten deines Hyundai, Kia oder Genesis über die **offizielle Pleos Vehicle Data API** nach Home Assistant: Akkustand, Reichweite, Ladestatus, Kilometerstand, Türen und Schlösser, Reifendruck, Warnleuchten, Klima und Position.
+- [Was macht die Integration?](#was-macht-die-integration)
+- [Voraussetzungen](#voraussetzungen)
+- [API-Schlüssel holen](#api-schlüssel-holen)
+- [Schlüssel widerrufen und erneuern](#schlüssel-widerrufen-und-erneuern)
+- [Installation](#installation)
+- [Einrichtung](#einrichtung)
+- [Zweites Auto hinzufügen](#zweites-auto-hinzufügen)
+- [Diagnose und Fehlersuche](#diagnose-und-fehlersuche)
+- [FAQ](#faq)
 
-> **Nur Daten, kein Steuern.** Die Pleos-Schnittstelle bietet keine Befehle (Klima starten, Laden, Verriegeln). Wer steuern möchte, nutzt dafür zusätzlich eine andere Integration.
+### Was macht die Integration?
+
+Die Integration zeigt die Daten deines Autos in Home Assistant: Akkustand, Ladezustand, Reichweite, Kilometerstand, Türen und Schlösser, Reifendruck, Warnungen, Klima, Sitzheizung und Position.
+
+- **Nur lesen.** Die Pleos Vehicle Data API liefert ausschließlich Daten. Steuern (Klima starten, Laden, Ver-/Entriegeln) ist über diesen Weg **nicht möglich**. Wenn du Befehle brauchst und die Integration „Hyundai / Kia Connect“ bei dir noch funktioniert, kannst du sie parallel weiter nutzen.
+- **Marken:** Hyundai (getestet), Kia und Genesis (**ungetestet, Rückmeldung willkommen** – bitte ein [Issue](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/issues) öffnen).
+- **Region:** nur Europa.
+- Entitätsnamen wie bei „Hyundai / Kia Connect“ (kia_uvo), damit Umsteiger ihre Automationen und Dashboards behalten können.
 
 ### Voraussetzungen
 
-- Das Auto ist in der App deiner Marke eingerichtet: **Hyundai Bluelink**, **Kia Connect** oder **Genesis Connected Services**.
-- Du wohnst in **Europa** (u. a. Deutschland, Österreich, Schweiz). Andere Regionen bietet Pleos derzeit nicht an.
-- Home Assistant 2026.3 oder neuer, HACS.
-
-Getestet mit Hyundai. Kia und Genesis nutzen laut Pleos dieselbe Schnittstelle, sind aber **ungetestet** – Rückmeldungen sind willkommen.
-
-### Installation
-
-1. HACS öffnen › drei Punkte oben rechts › **Benutzerdefinierte Repositories**.
-2. `https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA` eintragen, Typ **Integration**.
-3. „Hyundai Kia Genesis (Pleos)“ herunterladen und Home Assistant neu starten.
-4. **Einstellungen › Geräte & Dienste › Integration hinzufügen** › „Hyundai Kia Genesis (Pleos)“.
+- Home Assistant **2025.1.0** oder neuer
+- [HACS](https://hacs.xyz/) (empfohlen)
+- Ein Konto der Marken-App, in dem dein Auto eingetragen ist:
+  - Hyundai: **Bluelink**
+  - Kia: **Kia Connect**
+  - Genesis: **Genesis Connected Services**
+- Wohnsitz/Fahrzeug in Europa
+- Ein kostenloses Konto bei [pleos.ai/playground](https://pleos.ai/playground) (siehe unten)
 
 ### API-Schlüssel holen
 
-Jeder holt sich seinen eigenen, kostenlosen Schlüssel. Der Einrichtungsdialog zeigt dieselbe Anleitung.
+Jeder Nutzer holt sich seinen eigenen, kostenlosen Schlüssel (Weg „Private Users“). Das dauert etwa fünf Minuten.
 
-1. [Pleos Playground](https://pleos.ai/playground) öffnen und kostenlos registrieren.
-2. Oben rechts auf das **Personen-Symbol** › **My Vehicle Data API**. (Der Menüpunkt erscheint nur in Europa.)
-3. Den Reiter deiner Marke wählen (Hyundai, Kia oder Genesis).
-4. Beide Bedingungen abhaken und **Get API Key** drücken.
-5. Im neuen Fenster mit dem Konto deiner Auto-App anmelden (dieselben Zugangsdaten wie auf dem Handy).
-6. **Client-ID** und **Client-Secret** kopieren und in Home Assistant eintragen.
+1. [pleos.ai/playground](https://pleos.ai/playground) öffnen und kostenlos **registrieren**.
+2. Oben rechts auf das **Personen-Symbol** › **My Vehicle Data API** klicken.
+   <!-- Screenshot: playground-menu.png -->
+3. Den Reiter deiner Marke wählen (**Hyundai**, **Kia** oder **Genesis**).
+4. Die **Bedingungen annehmen**.
+5. Auf **Get API Key** klicken.
+   <!-- Screenshot: playground-get-api-key.png -->
+6. Mit den Zugangsdaten deiner Marken-App anmelden (Bluelink / Kia Connect / Genesis Connected Services).
+   <!-- Screenshot: playground-brand-login.png -->
+7. **Client-ID** und **Client-Secret** kopieren und sicher aufbewahren.
+   <!-- Screenshot: playground-api-key.png -->
 
-<!-- Screenshot: docs/images/playground-menu.png (Personen-Symbol › My Vehicle Data API) -->
-<!-- Screenshot: docs/images/playground-key.png (Client-ID und Client-Secret) -->
+> **Wichtig**
+> - In den Schlüssel kommen nur die Autos, die **zum Zeitpunkt der Ausgabe** in deinem App-Konto sind. Neues Auto? → Auto in der App hinzufügen, alten Schlüssel widerrufen und einen neuen holen.
+> - Ein Schlüssel gilt **pro Marke**. Wer z. B. einen Hyundai und einen Kia hat, holt zwei Schlüssel und richtet die Integration **einmal pro Marke** ein.
 
-Gut zu wissen:
+### Schlüssel widerrufen und erneuern
 
-- **Ein Schlüssel pro Marke.** Hast du einen Hyundai und einen Kia, richtest du die Integration zweimal ein.
-- **Nur Autos, die beim Ausstellen in der App waren**, sind im Schlüssel. Kommt ein Auto dazu, brauchst du einen neuen Schlüssel (siehe unten).
-- Neuen Schlüssel holen oder alten widerrufen: auf derselben Seite **Revoke API Key** und danach **Get API Key**. Der alte Schlüssel wird sofort ungültig; Home Assistant meldet sich dann unter **Einstellungen › Reparaturen** und fragt nach dem neuen.
+1. Auf [pleos.ai/playground](https://pleos.ai/playground) › Personen-Symbol › **My Vehicle Data API** den Reiter der Marke öffnen.
+2. Den bestehenden Schlüssel **widerrufen** (Revoke).
+3. Mit **Get API Key** einen neuen Schlüssel holen.
+4. In Home Assistant: **Einstellungen › Geräte & Dienste › Hyundai Kia Genesis (Pleos) - EU** › Menü (⋮) › **Neu konfigurieren** › „Schlüssel ändern“ und die neuen Daten eingeben.
+
+Wird der alte Schlüssel ungültig, startet Home Assistant automatisch den Erneuerungs-Dialog und zeigt eine Meldung unter **Einstellungen › Reparaturen**.
+
+### Installation
+
+**Über HACS (empfohlen)**
+
+1. HACS öffnen › Menü (⋮) oben rechts › **Benutzerdefinierte Repositories**.
+2. URL `https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA` eintragen, Typ **Integration**, hinzufügen.
+3. „Hyundai Kia Genesis (Pleos) - EU“ suchen und **herunterladen**.
+4. Home Assistant **neu starten**.
+
+[![In HACS öffnen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Marcels-Custom-Coding&repository=Hyundai-Kia-Genesis-Pleos-HA&category=integration)
+
+**Manuell**
+
+1. Den Ordner `custom_components/hkg_pleos` aus diesem Repository in deinen Home-Assistant-Ordner `config/custom_components/` kopieren.
+2. Home Assistant neu starten.
 
 ### Einrichtung
 
-1. **Marke wählen.**
-2. **Schlüssel vorhanden?** – „Ja“ führt direkt zur Eingabe, „Nein“ zeigt erst die Anleitung.
-3. **Schlüssel eingeben.** Die Integration prüft ihn sofort und sucht deine Autos.
-4. **Autos wählen und benennen.** Der Name aus der App ist vorbefüllt. Nach ihm heißen alle Entitäten, z. B. `sensor.<name>_ev_battery_level`. Dazu das Abfrageintervall (Standard 10 Minuten).
-5. **Alte Entitäten übernehmen?** – nur wenn du vorher „Hyundai / Kia Connect“ hattest (siehe unten).
+**Einstellungen › Geräte & Dienste › Integration hinzufügen › „Hyundai Kia Genesis (Pleos) - EU“**
 
-Später, über die drei Punkte der Integration › **Neu konfigurieren**:
+[![Integration hinzufügen](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hkg_pleos)
 
-- **Neues Auto hinzufügen** – mit Anleitung: Auto in der App hinzufügen, alten Schlüssel widerrufen, neuen holen, eintragen. Nur die neuen Autos werden zum Benennen angezeigt; die bisherigen bleiben unverändert.
-- **Schlüssel ändern**
-- **Autos umbenennen / Intervall** (auch über das Zahnrad erreichbar)
+1. **Marke wählen:** Hyundai, Kia oder Genesis.
+2. **Hast du schon einen API-Schlüssel?** „Ja, eingeben“ oder „Nein, zeig mir wie“.
+3. **Anleitung** (nur bei „Nein“): dieselben Schritte wie oben, passend zur Marke.
+4. **Schlüssel eingeben:** Client-ID und Client-Secret. Die Integration prüft die Anmeldung sofort und holt die Autos.
+5. **Autos und Namen:** Jedes gefundene Auto (Modell + letzte 4 Stellen der VIN) mit Häkchen und Namen. Der Name ist mit dem App-Namen vorbefüllt – so heißen danach alle Entitäten. Hattest du vorher „Hyundai / Kia Connect“, nimm **denselben Namen**.
+6. **Abfrageintervall:** wie oft Daten geholt werden (Standard 10 Minuten, 5–1440).
+7. **Übernahme** (nur wenn ein „Hyundai / Kia Connect“-Gerät mit gleicher VIN gefunden wird): „Alte Entitäten übernehmen?“ – bei „Ja“ bleiben Entity-IDs, Verlauf, Automationen und Dashboards erhalten. Ohne Zustimmung wird nichts angefasst.
 
-### Umstieg von „Hyundai / Kia Connect“
+<!-- Screenshot: setup-vehicles.png -->
 
-Die Entitäten heißen genauso wie bei „Hyundai / Kia Connect“ (kia_uvo). Findet die Einrichtung dort ein Auto mit derselben Fahrgestellnummer, bietet sie an, die **Entity-IDs zu übernehmen**. Dann laufen Verlauf, Automationen und Dashboards weiter. Bereich, eigener Name und Symbol werden mitgenommen.
+Intervall und Namen lassen sich später über **Konfigurieren** bzw. **Neu konfigurieren** ändern.
 
-- Ohne deine Zustimmung wird nichts verändert.
-- Entferne die alte Integration danach, sonst legt sie ihre Entitäten neu an.
-- Schalter, Knöpfe, Schloss, Klima und Ladelimit-Regler gibt es hier nicht, weil Pleos keine Befehle kennt.
-- Die Ladelimits heißen hier `sensor.<name>_ac_charge_limit` / `_dc_charge_limit` (in Prozent).
+### Zweites Auto hinzufügen
 
-### Entitäten
+Da nur Autos im Schlüssel sind, die beim Ausstellen in der App waren:
 
-Angelegt wird nur, was dein Auto wirklich liefert (ein E-Auto bekommt keinen Tank-Sensor). Meldet ein Wert erst später Daten, erscheint die Entität dann automatisch.
+1. Auto in der Marken-App hinzufügen.
+2. Im Playground › **My Vehicle Data API** den alten Schlüssel widerrufen.
+3. **Get API Key** für einen neuen Schlüssel.
+4. In Home Assistant: Integration › Menü (⋮) › **Neu konfigurieren** › „Neues Auto hinzufügen“ und Client-ID + Secret eingeben.
 
-| Bereich | Entitäten |
-|---|---|
-| Akku & Laden | EV Battery Level, EV Battery Capacity, Estimated Charge Duration, Ladestatus, Ladelimit AC/DC, EV Battery Charge, EV Battery Plug, V2L/V2X status |
-| Reichweite & Antrieb | EV Range, Fuel Driving Range, Total Driving Range, Fuel Level, Car Battery Level, Odometer |
-| Fahrzustand | Engine, Accessory, IGN3, Sleep Mode Check, Transmission Condition |
-| Türen & Schloss | Türen offen/verriegelt (je Tür), Locked, Hood, Trunk, Sunroof |
-| Reifen | Tire Pressure (je Rad, Einheit wird umgerechnet), Reifendruck-Warnungen |
-| Warnleuchten | Fuel Low Level, Washer Fluid, Brake Fluid, Oil Level, Smart Key Battery, Lampenfehler |
-| Klima & Komfort | Air Conditioner, Set Temperature, Defrost, Steering Wheel Heater, Sitzheizung (Stufe und an/aus), Sitzbelüftung, Outside temperature |
-| Sonstiges | Location (Gerätetracker), Last Updated At, Location Last Updated, Vehicle Identification Number |
+Danach werden nur die **neuen** Autos zur Benennung angezeigt. Bestehende Autos und Entitäten bleiben unverändert, weil die IDs an der VIN hängen.
 
-### Häufige Fragen
+### Diagnose und Fehlersuche
 
-**„Der Schlüssel enthält kein Auto.“** – Das Auto war beim Ausstellen des Schlüssels noch nicht in der App, oder der Schlüssel gehört zu einer anderen Marke. Schlüssel widerrufen, neu holen, eintragen.
+**Diagnose:** Integration › Menü (⋮) › **Diagnose herunterladen**. VIN, Client-Secret und Position werden darin geschwärzt.
 
-**Manche Werte bleiben leer.** – Pleos liefert nur, was das Auto sendet; das hängt von Modell und Baujahr ab. Fehlende Werte kommen als `null` und werden nicht angelegt.
+**Debug-Logging** in `configuration.yaml`:
 
-**Wie aktuell sind die Daten?** – So aktuell wie die letzte Meldung des Autos an Hyundai/Kia/Genesis. „Last Updated At“ zeigt den Zeitpunkt. Pleos bietet keine Push-Nachrichten; die Integration fragt im eingestellten Intervall.
+```yaml
+logger:
+  default: warning
+  logs:
+    custom_components.hkg_pleos: debug
+```
 
-**Ein Auto ist verschwunden.** – Wurde es verkauft oder aus der App entfernt, ist es nicht mehr im Schlüssel. Unter **Einstellungen › Reparaturen** erscheint dann „Auto … nicht mehr im Schlüssel“ mit einem Knopf zum Entfernen.
+Alternativ: Integration › Menü (⋮) › **Debug-Protokollierung aktivieren**.
 
-**Wo melde ich Fehler?** – [GitHub Issues](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/issues). Hilfreich ist die Diagnose-Datei (Integration › drei Punkte › Diagnose herunterladen); Schlüssel, Fahrgestellnummer und Position sind darin entfernt.
+### FAQ
+
+**„Keine Fahrzeuge gefunden“**
+Der Schlüssel enthält nur Autos, die beim Ausstellen in deinem App-Konto waren. Prüfe, ob das Auto in der App (Bluelink / Kia Connect / Genesis) sichtbar ist, und hol dann einen neuen Schlüssel (alten widerrufen, „Get API Key“). Achte auch auf den richtigen Marken-Reiter.
+
+**„Client-ID oder Secret stimmen nicht“**
+Beide Werte neu kopieren – ohne Leerzeichen am Anfang/Ende. Wurde der Schlüssel widerrufen, einen neuen holen. Prüfe außerdem, ob du die richtige Marke gewählt hast.
+
+**„Region nicht unterstützt“**
+Der Weg „Private Users“ ist nur in Europa verfügbar. Konto und Auto müssen in einem unterstützten europäischen Land registriert sein.
+
+**Wie oft werden die Daten aktualisiert?**
+Die Integration fragt im eingestellten Intervall ab (Standard 10 Minuten). Es gibt keine Push-Daten. Die Werte sind so aktuell, wie das Auto sie zuletzt an den Hersteller gesendet hat – meist nach dem Abstellen oder während des Ladens. Der Sensor „Last Updated At“ zeigt den Zeitpunkt.
+
+**Warum kann ich nicht verriegeln oder die Klimaanlage starten?**
+Die Pleos Vehicle Data API ist rein lesend und kennt keine Befehle. Für Befehle kannst du „Hyundai / Kia Connect“ parallel nutzen, solange es bei dir funktioniert. Der Schlosszustand erscheint deshalb als Binärsensor „Locked“ statt als Schloss-Entität.
+
+**Ich komme von „Hyundai / Kia Connect“ – bleiben meine Automationen?**
+Ja, wenn du beim Einrichten **denselben Gerätenamen** verwendest und die **Übernahme** bestätigst. Dann bekommen die neuen Entitäten genau die alten Entity-IDs, Verlauf und Automationen laufen weiter. Werte, die Pleos nicht liefert (Schalter, Knöpfe, Klima-/Schloss-Steuerung), entfallen.
+
+**Manche Entitäten fehlen.**
+Entitäten werden nur angelegt, wenn das Auto beim ersten Abruf einen Wert liefert (ein E-Auto bekommt z. B. keinen Tank-Sensor). Nach einem Neuladen der Integration wird erneut geprüft.
 
 ---
 
 ## English
 
-This integration brings the data of your Hyundai, Kia or Genesis into Home Assistant via the **official Pleos Vehicle Data API**: battery level, range, charging state, odometer, doors and locks, tyre pressure, warning lights, climate and location.
+- [What does it do?](#what-does-it-do)
+- [Requirements](#requirements)
+- [Get your API key](#get-your-api-key)
+- [Revoke and renew the key](#revoke-and-renew-the-key)
+- [Installation](#installation-1)
+- [Setup](#setup)
+- [Adding a second car](#adding-a-second-car)
+- [Diagnostics and troubleshooting](#diagnostics-and-troubleshooting)
+- [FAQ](#faq-1)
 
-> **Data only, no control.** The Pleos interface offers no commands (start climate, charging, locking). Use another integration in addition if you need control.
+### What does it do?
+
+The integration shows your car's data in Home Assistant: battery level, charging state, range, odometer, doors and locks, tire pressure, warnings, climate, seat heating and location.
+
+- **Read only.** The Pleos Vehicle Data API only provides data. Controlling the car (start climate, charging, lock/unlock) is **not possible** this way. If you need commands and the "Hyundai / Kia Connect" integration still works for you, keep using it in parallel.
+- **Brands:** Hyundai (tested), Kia and Genesis (**untested, feedback welcome** – please open an [issue](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/issues)).
+- **Region:** Europe only.
+- Entity names match "Hyundai / Kia Connect" (kia_uvo), so people switching over can keep their automations and dashboards.
 
 ### Requirements
 
-- The car is set up in your brand's app: **Hyundai Bluelink**, **Kia Connect** or **Genesis Connected Services**.
-- You live in **Europe**. Pleos does not offer other regions at the moment.
-- Home Assistant 2026.3 or newer, HACS.
+- Home Assistant **2025.1.0** or newer
+- [HACS](https://hacs.xyz/) (recommended)
+- An account of the brand app with your car in it:
+  - Hyundai: **Bluelink**
+  - Kia: **Kia Connect**
+  - Genesis: **Genesis Connected Services**
+- Account/vehicle in Europe
+- A free account at [pleos.ai/playground](https://pleos.ai/playground) (see below)
 
-Tested with Hyundai. According to Pleos, Kia and Genesis use the same interface but are **untested** – feedback is welcome.
+### Get your API key
+
+Every user gets their own free key ("Private Users" path). It takes about five minutes.
+
+1. Open [pleos.ai/playground](https://pleos.ai/playground) and **register** for free.
+2. Click the **person icon** (top right) › **My Vehicle Data API**.
+   <!-- Screenshot: playground-menu.png -->
+3. Choose the tab of your brand (**Hyundai**, **Kia** or **Genesis**).
+4. **Accept the terms**.
+5. Click **Get API Key**.
+   <!-- Screenshot: playground-get-api-key.png -->
+6. Log in with your brand app account (Bluelink / Kia Connect / Genesis Connected Services).
+   <!-- Screenshot: playground-brand-login.png -->
+7. Copy the **Client ID** and **Client Secret** and keep them safe.
+   <!-- Screenshot: playground-api-key.png -->
+
+> **Important**
+> - The key only contains the cars that are in your app account **at the time the key is issued**. New car? → add it in the app, revoke the old key and get a new one.
+> - A key is valid **per brand**. If you own e.g. a Hyundai and a Kia, get two keys and set up the integration **once per brand**.
+
+### Revoke and renew the key
+
+1. On [pleos.ai/playground](https://pleos.ai/playground) › person icon › **My Vehicle Data API**, open your brand's tab.
+2. **Revoke** the existing key.
+3. Get a new one with **Get API Key**.
+4. In Home Assistant: **Settings › Devices & services › Hyundai Kia Genesis (Pleos) - EU** › menu (⋮) › **Reconfigure** › "Change key" and enter the new values.
+
+If the old key stops working, Home Assistant starts the re-authentication dialog automatically and shows a notice under **Settings › Repairs**.
 
 ### Installation
 
-1. Open HACS › three dots top right › **Custom repositories**.
-2. Add `https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA`, type **Integration**.
-3. Download “Hyundai Kia Genesis (Pleos)” and restart Home Assistant.
-4. **Settings › Devices & services › Add integration** › “Hyundai Kia Genesis (Pleos)”.
+**Via HACS (recommended)**
 
-### Getting the API key
+1. Open HACS › menu (⋮) top right › **Custom repositories**.
+2. Enter `https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA`, type **Integration**, add.
+3. Search for "Hyundai Kia Genesis (Pleos) - EU" and **download** it.
+4. **Restart** Home Assistant.
 
-Everyone gets their own free key. The setup dialog shows the same instructions.
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Marcels-Custom-Coding&repository=Hyundai-Kia-Genesis-Pleos-HA&category=integration)
 
-1. Open the [Pleos Playground](https://pleos.ai/playground) and sign up for free.
-2. Top right **person icon** › **My Vehicle Data API**. (Only shown in Europe.)
-3. Choose your brand's tab (Hyundai, Kia or Genesis).
-4. Tick both terms and press **Get API Key**.
-5. Sign in with your car app account in the new window (same credentials as on your phone).
-6. Copy **Client ID** and **Client Secret** and enter them in Home Assistant.
+**Manual**
 
-Good to know:
-
-- **One key per brand.** With a Hyundai and a Kia you set up the integration twice.
-- **Only cars that were in the app when the key was issued** are part of it. For a new car you need a new key (see below).
-- To renew or revoke: **Revoke API Key** on the same page, then **Get API Key**. The old key stops working right away; Home Assistant then shows a notice under **Settings › Repairs** and asks for the new one.
+1. Copy the folder `custom_components/hkg_pleos` from this repository into your Home Assistant `config/custom_components/` folder.
+2. Restart Home Assistant.
 
 ### Setup
 
-1. **Choose the brand.**
-2. **Do you have a key?** – “Yes” goes straight to the input, “No” shows the instructions first.
-3. **Enter the key.** The integration checks it right away and looks for your cars.
-4. **Choose and name your cars.** The name from the app is pre-filled. All entities are named after it, e.g. `sensor.<name>_ev_battery_level`. Plus the polling interval (default 10 minutes).
-5. **Take over old entities?** – only if you used “Hyundai / Kia Connect” before (see below).
+**Settings › Devices & services › Add integration › "Hyundai Kia Genesis (Pleos) - EU"**
 
-Later, via the integration's three dots › **Reconfigure**: add a new car (with instructions; only new cars are shown), change the key, rename cars / interval (also via the gear icon).
+[![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hkg_pleos)
 
-### Switching from “Hyundai / Kia Connect”
+1. **Choose the brand:** Hyundai, Kia or Genesis.
+2. **Do you already have an API key?** "Yes, enter it" or "No, show me how".
+3. **Guide** (only for "No"): the same steps as above, adapted to your brand.
+4. **Enter the key:** Client ID and Client Secret. The integration tests the login right away and fetches your cars.
+5. **Cars and names:** every car found (model + last 4 characters of the VIN) with a checkbox and a name. The name is pre-filled with the name from the app – all entities are named after it. If you used "Hyundai / Kia Connect" before, use **the same name**.
+6. **Polling interval:** how often data is fetched (default 10 minutes, 5–1440).
+7. **Takeover** (only if a "Hyundai / Kia Connect" device with the same VIN is found): "Take over old entities?" – with "Yes", entity IDs, history, automations and dashboards are kept. Nothing is touched without your consent.
 
-Entities are named exactly like in “Hyundai / Kia Connect” (kia_uvo). If setup finds a car with the same VIN there, it offers to **take over the entity IDs**, so history, automations and dashboards keep working. Area, custom name and icon are carried over. Nothing is changed without your consent. Remove the old integration afterwards. Switches, buttons, lock, climate and charge limit controls are not available because Pleos has no commands. Charge limits are `sensor.<name>_ac_charge_limit` / `_dc_charge_limit` (percent).
+<!-- Screenshot: setup-vehicles.png -->
 
-### Entities
+Interval and names can be changed later via **Configure** or **Reconfigure**.
 
-Only values your car actually reports are created (an EV gets no fuel sensor). If a value shows up later, its entity appears automatically. See the table in the German section for the full list.
+### Adding a second car
+
+Because the key only contains cars that were in the app when it was issued:
+
+1. Add the car in the brand app.
+2. In the playground › **My Vehicle Data API**, revoke the old key.
+3. Click **Get API Key** for a new key.
+4. In Home Assistant: integration › menu (⋮) › **Reconfigure** › "Add a new car" and enter Client ID + Secret.
+
+Only the **new** cars are then shown for naming. Existing cars and entities stay unchanged, because their IDs are based on the VIN.
+
+### Diagnostics and troubleshooting
+
+**Diagnostics:** integration › menu (⋮) › **Download diagnostics**. VIN, client secret and location are redacted.
+
+**Debug logging** in `configuration.yaml`:
+
+```yaml
+logger:
+  default: warning
+  logs:
+    custom_components.hkg_pleos: debug
+```
+
+Or: integration › menu (⋮) › **Enable debug logging**.
 
 ### FAQ
 
-- **“The key does not contain any car.”** – The car was not in the app when the key was issued, or the key belongs to another brand. Revoke, get a new key, enter it.
-- **Some values stay empty.** – Pleos only provides what the car sends; this depends on model and year.
-- **How current is the data?** – As current as the car's last report. “Last Updated At” shows the time. Pleos has no push; the integration polls at the set interval.
-- **A car disappeared.** – Sold or removed from the app: a repair notice offers to remove it.
-- **Bug reports:** [GitHub Issues](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/issues), ideally with the diagnostics file (key, VIN and location are removed).
+**"No vehicles found"**
+The key only contains cars that were in your app account when it was issued. Check that the car is visible in the app (Bluelink / Kia Connect / Genesis), then get a new key (revoke the old one, "Get API Key"). Also make sure you used the right brand tab.
+
+**"Client ID or secret is wrong"**
+Copy both values again – without leading/trailing spaces. If the key was revoked, get a new one. Also check that you selected the right brand.
+
+**"Region not supported"**
+The "Private Users" path is only available in Europe. Account and car must be registered in a supported European country.
+
+**How often is the data updated?**
+The integration polls at the configured interval (default 10 minutes). There is no push. Values are as fresh as the car last sent them to the manufacturer – usually after parking or while charging. The "Last Updated At" sensor shows when.
+
+**Why can't I lock the car or start the climate control?**
+The Pleos Vehicle Data API is read only and has no commands. For commands you can keep "Hyundai / Kia Connect" running in parallel as long as it works for you. The lock state is therefore a binary sensor "Locked" instead of a lock entity.
+
+**I'm switching from "Hyundai / Kia Connect" – will my automations keep working?**
+Yes, if you use **the same device name** during setup and confirm the **takeover**. The new entities then get exactly the old entity IDs, and history and automations continue. Things Pleos does not provide (switches, buttons, climate/lock control) are dropped.
+
+**Some entities are missing.**
+Entities are only created if the car reports a value on the first refresh (an EV gets no fuel sensor, for example). Reloading the integration checks again.
 
 ---
 
-Not affiliated with Hyundai Motor Group, Hyundai, Kia, Genesis or Pleos. All trademarks belong to their owners.
+## Entitäten / Entities
+
+Entity IDs follow the pattern `<platform>.<device name>_<entity name>`, e.g. `sensor.ioniq_5_ev_battery_level`. Entities are only created when the car reports a value. /
+Entity-IDs folgen dem Muster `<plattform>.<gerätename>_<entitätsname>`. Entitäten werden nur angelegt, wenn das Auto einen Wert liefert.
+
+### Sensors
+
+| Entity | Source (Pleos) | Note |
+|---|---|---|
+| EV Battery Level | `batteries.charge.stateOfCharge` | % |
+| EV Battery Capacity | `batteries.charge.batteryCapacity` | kJ (shown as kWh), diagnostic |
+| AC Charge Limit | `batteries.charge.targetStateOfCharge.standard` | % |
+| DC Charge Limit | `batteries.charge.targetStateOfCharge.quick` | % |
+| Estimated Charge Duration | `batteries.charge.remainTime` | minutes |
+| Charging Status | `batteries.charge.status` | text, e.g. `charging`, `fastCharging` |
+| EV Range | `powertrains.distanceToEmpties` (EV) | km / mi |
+| Fuel Driving Range | `powertrains.distanceToEmpties` (ICE) | km / mi |
+| Total Driving Range | `powertrains.distanceToEmpties` (PHEV/HEV/FCEV, else the only one) | km / mi |
+| Fuel Level | `powertrains.engine.fuelLevel` | %, not for EV/FCEV |
+| EV Battery Remaining Ratio | `powertrains.batteries[main].remainRatio` | %, disabled by default |
+| Odometer | `driving.odometer` | km / mi |
+| Tire Pressure - Front Left / Front Right / Rear Left / Rear Right | `status.tire` | kPa / bar / psi |
+| Set Temperature | `status.climateControl.temperature` | °C / °F |
+| Outside temperature | `status.outsideTemperature` | °C / °F |
+| Steering Wheel Heat Level | `status.steeringWheelHeat` | text, diagnostic |
+| Warnings | `status.warnings` | comma-separated list or `none`, diagnostic |
+| Last Updated At | newest `timestamp` of all endpoints | timestamp |
+| Location Last Updated | `locations.timestamp` | timestamp, diagnostic |
+| Vehicle Identification Number | VIN | diagnostic |
+
+### Binary sensors
+
+| Entity | Source (Pleos) | Note |
+|---|---|---|
+| EV Battery Charge | `batteries.charge.charging` | on = charging |
+| EV Battery Plug | `batteries.charge.plugin` | on = connected |
+| V2L status / V2X status | `batteries.charge.status` (`v2lOperating` / `v2xOperating`) | EV / PHEV |
+| Engine | `driving.ignition` (ign1) | on = running |
+| Accessory | `driving.ignition` (acc) | |
+| IGN3 | `driving.ignition` (ign3) | |
+| Sleep Mode Check | `driving.sleepMode` | |
+| Transmission Condition | `driving.transmission.parkingPosition` | on = in park |
+| Front Left / Front Right / Back Left / Back Right Door | `status.doors` | on = open |
+| Front Left / … / Back Right Door Lock | `status.doors` | lock class: on = unlocked |
+| Locked | `status.doors` (all) | lock class: on = at least one door unlocked |
+| Hood / Trunk / Sunroof | `status.hood` / `trunk` / `sunroof` | on = open |
+| Fuel Low Level, Washer Fluid Warning, Smart Key Battery Warning, Brake Fluid Warning, Oil Level Warning | `status.warnings` | problem; fuel/oil not for EV/FCEV |
+| Tire Pressure - All / Front Left / Front Right / Rear Left / Rear Right | `status.warnings` | problem |
+| Headlamp Status, Turn Signal Left/Right Front, Turn Signal Left/Right Rear, Rear Left / Rear Right Lamp Fault (stop lamps) | `status.warnings` (`frontHeadLamp`, `…TurnSignal`, `…StopLamp`) | problem |
+| Air Conditioner | `status.climateControl.status` | |
+| Defrost | `status.windshield.defrost` | |
+| Steering Wheel Heater | `status.steeringWheelHeat` | |
+| Front Left / Front Right / Rear Left / Rear Right Seat Heater | `status.seats` | |
+
+### Device tracker
+
+| Entity | Source (Pleos) | Note |
+|---|---|---|
+| Location | `locations.location` | attributes: altitude, heading, speed, last_update |
+
+---
+
+## Images / Bilder
+
+Screenshots referenced above (`<!-- Screenshot: … -->`) belong in [`docs/images/`](docs/images/). /
+Die oben markierten Screenshots gehören nach `docs/images/`.
+
+## License / Lizenz
+
+[MIT](LICENSE) © 2026 Marcels-Custom-Coding
+
+Hyundai, Kia, Genesis, Bluelink, Kia Connect and Pleos are trademarks of their respective owners. This project is not affiliated with or endorsed by Hyundai Motor Group. /
+Dieses Projekt steht in keiner Verbindung zur Hyundai Motor Group.

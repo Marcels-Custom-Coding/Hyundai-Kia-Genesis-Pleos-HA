@@ -1,128 +1,87 @@
-"""Repair issues: expired key and vehicles that left the key."""
+"""Repair flows for Hyundai Kia Genesis (Pleos) - EU."""
 
 from __future__ import annotations
 
 from typing import Any
 
+from homeassistant.components.repairs import ConfirmRepairFlow, RepairsFlow
+from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import device_registry as dr, issue_registry as ir
 import voluptuous as vol
 
-from homeassistant import data_entry_flow
-from homeassistant.components.repairs import RepairsFlow
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr, issue_registry as ir
-
+from .config_flow import entry_title
 from .const import (
-    BRAND_NAMES,
     CONF_BRAND,
+    CONF_PENDING_MIGRATION,
     CONF_VEHICLES,
     DOMAIN,
-    ISSUE_AUTH_FAILED,
     ISSUE_VEHICLE_REMOVED,
-    PLAYGROUND_URL,
+    VEHICLE_NAME,
 )
-from .migrate import find_device
-
-
-def _auth_issue_id(entry: ConfigEntry) -> str:
-    return f"{ISSUE_AUTH_FAILED}_{entry.entry_id}"
-
-
-def _vehicle_issue_id(entry: ConfigEntry, vin: str) -> str:
-    return f"{ISSUE_VEHICLE_REMOVED}_{entry.entry_id}_{vin}"
-
-
-@callback
-def async_create_auth_issue(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Point the user to the reauthentication."""
-    ir.async_create_issue(
-        hass,
-        DOMAIN,
-        _auth_issue_id(entry),
-        is_fixable=False,
-        is_persistent=False,
-        severity=ir.IssueSeverity.ERROR,
-        translation_key=ISSUE_AUTH_FAILED,
-        translation_placeholders={
-            "brand": BRAND_NAMES.get(entry.data.get(CONF_BRAND, ""), ""),
-            "title": entry.title,
-            "playground_url": PLAYGROUND_URL,
-        },
-        learn_more_url=PLAYGROUND_URL,
-    )
-
-
-@callback
-def async_delete_auth_issue(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    ir.async_delete_issue(hass, DOMAIN, _auth_issue_id(entry))
-
-
-@callback
-def async_create_vehicle_removed_issue(
-    hass: HomeAssistant, entry: ConfigEntry, vin: str, name: str
-) -> None:
-    """Offer to remove a car that is no longer shared with the key."""
-    ir.async_create_issue(
-        hass,
-        DOMAIN,
-        _vehicle_issue_id(entry, vin),
-        is_fixable=True,
-        is_persistent=False,
-        severity=ir.IssueSeverity.WARNING,
-        translation_key=ISSUE_VEHICLE_REMOVED,
-        translation_placeholders={"name": name, "vin_end": vin[-4:]},
-        data={"entry_id": entry.entry_id, "vin": vin},
-    )
-
-
-@callback
-def async_delete_vehicle_removed_issue(
-    hass: HomeAssistant, entry: ConfigEntry, vin: str
-) -> None:
-    ir.async_delete_issue(hass, DOMAIN, _vehicle_issue_id(entry, vin))
 
 
 class VehicleRemovedRepairFlow(RepairsFlow):
-    """Remove the car and its entities after confirmation."""
+    """Offer to remove a car that is no longer part of the API key."""
 
     def __init__(self, entry_id: str, vin: str) -> None:
+        """Initialize the flow."""
         self._entry_id = entry_id
         self._vin = vin
 
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> data_entry_flow.FlowResult:
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """Start with the confirmation."""
         return await self.async_step_confirm()
 
-    async def async_step_confirm(
-        self, user_input: dict[str, Any] | None = None
-    ) -> data_entry_flow.FlowResult:
+    async def async_step_confirm(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """Ask, then remove the car from the entry and the device registry."""
+        entry = self.hass.config_entries.async_get_entry(self._entry_id)
+        if entry is None:
+            ir.async_delete_issue(self.hass, DOMAIN, self.issue_id)
+            return self.async_abort(reason="entry_not_found")
+
+        vehicles: dict[str, Any] = dict(entry.data.get(CONF_VEHICLES, {}))
+        name = (vehicles.get(self._vin) or {}).get(VEHICLE_NAME) or self._vin[-4:]
+
         if user_input is not None:
-            entry = self.hass.config_entries.async_get_entry(self._entry_id)
-            if entry is not None:
-                vehicles = dict(entry.data.get(CONF_VEHICLES, {}))
-                vehicles.pop(self._vin, None)
-                device = find_device(self.hass, (DOMAIN, self._vin))
-                if device is not None:
-                    dr.async_get(self.hass).async_update_device(
-                        device.id, remove_config_entry_id=entry.entry_id
-                    )
-                self.hass.config_entries.async_update_entry(
-                    entry, data={**entry.data, CONF_VEHICLES: vehicles}
+            vehicles.pop(self._vin, None)
+            data = {**entry.data, CONF_VEHICLES: vehicles}
+            if pending := data.get(CONF_PENDING_MIGRATION):
+                data[CONF_PENDING_MIGRATION] = [v for v in pending if v != self._vin]
+            self.hass.config_entries.async_update_entry(
+                entry,
+                title=entry_title(entry.data[CONF_BRAND], vehicles),
+                data=data,
+            )
+
+            device_registry = dr.async_get(self.hass)
+            if device := device_registry.async_get_device(identifiers={(DOMAIN, self._vin)}):
+                device_registry.async_update_device(
+                    device.id, remove_config_entry_id=entry.entry_id
                 )
+
+            ir.async_delete_issue(self.hass, DOMAIN, self.issue_id)
+            self.hass.config_entries.async_schedule_reload(entry.entry_id)
             return self.async_create_entry(data={})
-        issue = ir.async_get(self.hass).async_get_issue(self.handler, self.issue_id)
-        placeholders = dict(issue.translation_placeholders or {}) if issue else {}
+
         return self.async_show_form(
             step_id="confirm",
             data_schema=vol.Schema({}),
-            description_placeholders=placeholders,
+            description_placeholders={"name": name, "vin_tail": self._vin[-4:]},
         )
 
 
 async def async_create_fix_flow(
-    hass: HomeAssistant, issue_id: str, data: dict[str, Any] | None
+    hass: HomeAssistant,
+    issue_id: str,
+    data: dict[str, str | int | float | None] | None,
 ) -> RepairsFlow:
-    """Create the flow behind a fixable issue."""
-    assert data is not None
-    return VehicleRemovedRepairFlow(str(data["entry_id"]), str(data["vin"]))
+    """Create the fix flow for a repair issue."""
+    if (
+        issue_id.startswith(ISSUE_VEHICLE_REMOVED)
+        and data
+        and isinstance(data.get("entry_id"), str)
+        and isinstance(data.get("vin"), str)
+    ):
+        return VehicleRemovedRepairFlow(str(data["entry_id"]), str(data["vin"]))
+    return ConfirmRepairFlow()

@@ -1,9 +1,7 @@
 {
   "domain": "hkg_pleos",
-  "name": "Hyundai Kia Genesis (Pleos)",
-  "codeowners": [
-    "@Marcels-Custom-Coding"
-  ],
+  "name": "Hyundai Kia Genesis (Pleos) - EU",
+  "codeowners": ["@Marcels-Custom-Coding"],
   "config_flow": true,
   "documentation": "https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA",
   "integration_type": "hub",

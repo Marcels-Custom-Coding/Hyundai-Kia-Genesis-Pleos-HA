@@ -2,19 +2,12 @@
   "data": {
     "vehicles": [
       {
-        "vin": "KMHTEST1234567890",
-        "nickname": "My Car",
-        "name": "NE(NE)",
+        "vin": "KMHTEST0000000001",
+        "nickname": "IONIQ 5",
+        "name": "IONIQ 5",
         "type": "EV",
         "sellname": "IONIQ 5"
       }
     ]
-  },
-  "meta": {
-    "code": 200,
-    "message": "Success",
-    "success": "true",
-    "timestamp": "2025-09-01T11:00:00Z",
-    "requestId": "x"
   }
 }

@@ -2,74 +2,66 @@
   "config": {
     "step": {
       "user": {
-        "title": "Willkommen",
-        "description": "Diese Integration zeigt Daten deines Autos in Home Assistant: Akku, Reichweite, Türen, Reifendruck, Position und mehr. Die Daten kommen über die offizielle Pleos-Schnittstelle von Hyundai, Kia und Genesis.\n\n**Steuern ist über diesen Weg nicht möglich** – die Schnittstelle liefert nur Daten.\n\nVon welcher Marke ist dein Auto?",
+        "title": "Hyundai Kia Genesis (Pleos) - EU",
+        "description": "Diese Integration zeigt Daten deines Autos in Home Assistant: Akku, Reichweite, Türen, Position und mehr. Die Daten kommen von der offiziellen Pleos Vehicle Data API.\n\nSteuern (Klima, Laden, Schloss) ist über diesen Weg nicht möglich.\n\nVon welcher Marke ist dein Auto?",
         "data": {
           "brand": "Marke"
         },
         "data_description": {
-          "brand": "Hast du Autos von mehreren Marken, richte die Integration einfach einmal pro Marke ein. Jede Marke braucht ihren eigenen Schlüssel."
+          "brand": "Die Marke deines Autos. Hast du Autos von mehreren Marken, richte die Integration einmal pro Marke ein."
         }
       },
       "key_menu": {
-        "title": "API-Schlüssel",
-        "description": "Für die Verbindung brauchst du einen kostenlosen, persönlichen API-Schlüssel für {brand}. Er besteht aus einer **Client-ID** und einem **Client-Secret**.\n\nHast du schon einen?",
+        "title": "Hast du schon einen API-Schlüssel?",
+        "description": "Du brauchst einen kostenlosen persönlichen API-Schlüssel (Client-ID und Client-Secret) aus dem Pleos Playground für deinen {brand}.",
         "menu_options": {
-          "credentials": "Ja, Schlüssel eingeben",
-          "guide": "Nein, zeig mir, wie ich ihn bekomme"
+          "credentials": "Ja, eingeben",
+          "guide": "Nein, zeig mir wie"
         }
       },
       "guide": {
-        "title": "So bekommst du den Schlüssel",
-        "description": "Das dauert etwa 5 Minuten:\n\n1. [Pleos Playground öffnen]({url}) und kostenlos registrieren.\n2. Oben rechts auf das **Personen-Symbol** tippen und **My Vehicle Data API** wählen.\n3. Den Reiter **{brand}** wählen, die beiden Bedingungen abhaken und **Get API Key** drücken.\n4. Im neuen Fenster mit den Zugangsdaten deiner **{account}**-App anmelden (dieselben wie in der App auf dem Handy).\n5. **Client-ID** und **Client-Secret** kopieren und hier auf **Absenden** drücken.\n\nWichtig:\n- Das geht nur in Europa (Deutschland, Österreich, Schweiz und weitere).\n- Der Schlüssel enthält nur Autos, die **schon in der App** sind. Kommt später ein Auto dazu, holst du einen neuen Schlüssel."
+        "title": "So bekommst du deinen API-Schlüssel",
+        "description": "1. [pleos.ai/playground]({url}) öffnen und kostenlos registrieren.\n2. Oben rechts auf das Personen-Symbol › **My Vehicle Data API**.\n3. Reiter **{brand}** wählen, Bedingungen annehmen, **Get API Key**.\n4. Mit den Zugangsdaten der {brand}-App ({account}) anmelden.\n5. Client-ID und Client-Secret kopieren, dann hier auf **Weiter**.\n\n**Gut zu wissen:**\n- Das geht nur in Europa.\n- Nur Autos, die schon in deiner {account}-App sind, kommen in den Schlüssel. Kommt später ein Auto dazu, brauchst du einen neuen Schlüssel."
       },
       "credentials": {
-        "title": "Schlüssel eingeben",
-        "description": "Kopiere beide Werte von der Seite **My Vehicle Data API** ({brand}). Nach dem Absenden prüft die Integration den Schlüssel sofort und sucht deine Autos.",
+        "title": "API-Schlüssel eingeben",
+        "description": "Füge Client-ID und Client-Secret aus dem [Pleos Playground]({url}) › My Vehicle Data API ein. Home Assistant prüft den Schlüssel sofort und holt deine Autos.",
         "data": {
           "client_id": "Client-ID",
           "client_secret": "Client-Secret"
         },
         "data_description": {
-          "client_id": "Steht im Playground unter My Vehicle Data API › {brand}. Am besten mit dem Kopieren-Knopf übernehmen.",
-          "client_secret": "Der geheime Teil des Schlüssels. Wird verdeckt angezeigt und nur in Home Assistant gespeichert."
+          "client_id": "Steht im Pleos Playground unter My Vehicle Data API nach „Get API Key“. Ohne Leerzeichen kopieren.",
+          "client_secret": "Steht neben der Client-ID. Es wird nur in deinem Home Assistant gespeichert und hier verdeckt angezeigt."
         }
       },
-      "vehicles": {
-        "title": "Deine Autos",
-        "description": "Gefunden: {count} Auto(s). Hake an, welche du einbinden möchtest, und gib jedem einen Namen.\n\n**So heißen danach alle Entitäten** des Autos (z. B. `sensor.<name>_ev_battery_level`). Vorbefüllt ist der Name aus der App.\n\nHattest du vorher **Hyundai / Kia Connect**? Dann nimm denselben Namen wie dort – so laufen alte Automationen und Dashboards weiter.",
+      "vehicle": {
+        "title": "Auto {index} von {count}",
+        "description": "Gefunden: **{model}** (VIN endet auf …{vin_tail}).\n\nSoll dieses Auto dazu, und wie soll es heißen?",
         "data": {
-          "selected": "Diese Autos einbinden",
-          "scan_interval": "Wie oft Daten holen?"
+          "include": "Dieses Auto hinzufügen",
+          "name": "Name"
         },
         "data_description": {
-          "selected": "Die Bezeichnung zeigt Modell und die letzten 4 Stellen der Fahrgestellnummer.",
-          "scan_interval": "In Minuten. Das Auto meldet sich ohnehin nur ab und zu; 10 Minuten passen meist gut."
+          "include": "Schalte das aus, wenn du dieses Auto nicht in Home Assistant haben willst.",
+          "name": "So heißen alle Entitäten. Wenn du vorher Hyundai/Kia Connect hattest, nimm denselben Namen, dann laufen alte Automationen weiter."
         }
       },
-      "migrate": {
-        "title": "Alte Entitäten übernehmen?",
-        "description": "Für {names} gibt es noch Entitäten aus **Hyundai / Kia Connect**.\n\nWenn du übernimmst, bekommen die neuen Entitäten genau dieselben Namen (Entity-IDs). **Verlauf, Automationen und Dashboards bleiben erhalten.** Die alten Einträge werden dabei ersetzt.\n\nSchalter, Knöpfe und das Schloss gibt es hier nicht, weil die Pleos-Schnittstelle nur Daten liefert.\n\nTipp: Entferne danach die alte Integration Hyundai / Kia Connect, damit sie keine doppelten Entitäten anlegt.",
-        "menu_options": {
-          "migrate_yes": "Ja, übernehmen (empfohlen)",
-          "migrate_no": "Nein, neu anlegen"
-        }
-      },
-      "reauth_confirm": {
-        "title": "Schlüssel erneuern",
-        "description": "Der API-Schlüssel für **{title}** gilt nicht mehr – er wurde widerrufen, neu ausgestellt oder ist abgelaufen.\n\nSo holst du einen neuen:\n1. [Pleos Playground öffnen]({url}) und anmelden.\n2. Personen-Symbol › **My Vehicle Data API** › Reiter **{brand}**.\n3. Falls nötig **Get API Key** drücken und mit dem {account}-Konto anmelden.\n4. Client-ID und Client-Secret hier eintragen.",
+      "finish": {
+        "title": "Fast fertig",
+        "description": "Wähle, wie oft Home Assistant neue Daten von deinem Auto holen soll.",
         "data": {
-          "client_id": "Client-ID",
-          "client_secret": "Client-Secret"
+          "scan_interval": "Wie oft Daten holen? (Minuten)",
+          "migrate": "Alte Entitäten übernehmen?"
         },
         "data_description": {
-          "client_id": "Steht im Playground unter My Vehicle Data API › {brand}.",
-          "client_secret": "Der geheime Teil des Schlüssels."
+          "scan_interval": "Standard: 10 Minuten. Erlaubt: 5 bis 1440 Minuten (einmal am Tag). Das Auto schickt nur ab und zu neue Daten, sehr kurze Abstände bringen daher selten etwas.",
+          "migrate": "Dieses Auto ist auch in der Integration „Hyundai / Kia Connect“ eingerichtet. Wenn du das einschaltest, übernehmen die neuen Entitäten die alten Entity-IDs: Verlauf, Automationen und Dashboards bleiben erhalten. Die alten Entitäten werden entfernt. Entferne danach die alte Integration, damit sie sie nicht neu anlegt. Bleibt es aus, wird nichts angefasst."
         }
       },
       "reconfigure": {
-        "title": "Einstellungen ändern",
-        "description": "Was möchtest du an **{title}** ändern?",
+        "title": "Was möchtest du ändern?",
+        "description": "Änderungen für deinen {brand}-Schlüssel.",
         "menu_options": {
           "add_vehicle": "Neues Auto hinzufügen",
           "change_key": "Schlüssel ändern",
@@ -78,69 +70,79 @@
       },
       "add_vehicle": {
         "title": "Neues Auto hinzufügen",
-        "description": "Ein Schlüssel enthält nur die Autos, die beim Ausstellen in der App waren. Für ein neues Auto brauchst du deshalb einen neuen Schlüssel:\n\n1. Das Auto in der **{account}**-App hinzufügen.\n2. [Pleos Playground öffnen]({url}) › Personen-Symbol › **My Vehicle Data API** › Reiter **{brand}**.\n3. **Revoke API Key** drücken und bestätigen (der alte Schlüssel wird ungültig).\n4. **Get API Key** drücken, mit dem {account}-Konto anmelden.\n5. Auf **Absenden** drücken und die neuen Werte eintragen.\n\nDeine bisherigen Autos und Entitäten bleiben unverändert."
-      },
-      "add_credentials": {
-        "title": "Neuen Schlüssel eingeben",
-        "description": "Trage den neuen Schlüssel ein. Danach zeigt die Integration nur die **neu hinzugekommenen** Autos zum Benennen an.",
+        "description": "Ein Schlüssel enthält nur die Autos, die beim Ausstellen in deiner App waren. Für ein neues Auto brauchst du einen neuen Schlüssel:\n\n1. Auto in der {brand}-App ({account}) hinzufügen.\n2. Im [Pleos Playground]({url}) › My Vehicle Data API den alten Schlüssel widerrufen.\n3. **Get API Key** für einen neuen Schlüssel.\n4. Hier die neue Client-ID und das neue Client-Secret eingeben.\n\nDanach werden nur die neuen Autos zur Benennung angezeigt. Bestehende Autos und Entitäten bleiben unverändert.",
         "data": {
           "client_id": "Client-ID",
           "client_secret": "Client-Secret"
         },
         "data_description": {
-          "client_id": "Die neue Client-ID von der Seite My Vehicle Data API › {brand}.",
-          "client_secret": "Das neue Client-Secret."
+          "client_id": "Steht im Pleos Playground unter My Vehicle Data API nach „Get API Key“. Ohne Leerzeichen kopieren.",
+          "client_secret": "Steht neben der Client-ID. Es wird nur in deinem Home Assistant gespeichert und hier verdeckt angezeigt."
         }
       },
       "change_key": {
         "title": "Schlüssel ändern",
-        "description": "Trage einen neuen Schlüssel für dieselben Autos ein, z. B. nachdem du den alten im [Pleos Playground]({url}) widerrufen hast.",
+        "description": "Gib die neue Client-ID und das neue Client-Secret aus dem [Pleos Playground]({url}) › My Vehicle Data API ein. Der neue Schlüssel muss mindestens eines deiner schon eingerichteten Autos enthalten.",
         "data": {
           "client_id": "Client-ID",
           "client_secret": "Client-Secret"
         },
         "data_description": {
-          "client_id": "Steht im Playground unter My Vehicle Data API › {brand}.",
-          "client_secret": "Der geheime Teil des Schlüssels."
+          "client_id": "Steht im Pleos Playground unter My Vehicle Data API nach „Get API Key“. Ohne Leerzeichen kopieren.",
+          "client_secret": "Steht neben der Client-ID. Es wird nur in deinem Home Assistant gespeichert und hier verdeckt angezeigt."
         }
       },
       "rename": {
-        "title": "Autos umbenennen",
-        "description": "Ein neuer Name ändert den Anzeigenamen des Autos. Bestehende Entity-IDs bleiben gleich, damit Automationen weiterlaufen.",
+        "title": "Autos umbenennen / Intervall",
+        "description": "Ändere die Namen deiner Autos und wie oft Daten geholt werden. Die Entitäten heißen nach dem Autonamen.",
         "data": {
-          "scan_interval": "Wie oft Daten holen?"
+          "scan_interval": "Wie oft Daten holen? (Minuten)"
         },
         "data_description": {
-          "scan_interval": "In Minuten. 10 Minuten passen meist gut."
+          "scan_interval": "Standard: 10 Minuten. Erlaubt: 5 bis 1440 Minuten (einmal am Tag). Das Auto schickt nur ab und zu neue Daten, sehr kurze Abstände bringen daher selten etwas."
+        }
+      },
+      "reauth_confirm": {
+        "title": "API-Schlüssel erneuern",
+        "description": "Der API-Schlüssel für {brand} gilt nicht mehr. Vielleicht wurde er widerrufen oder ist abgelaufen.\n\nSo bekommst du einen neuen:\n1. [Pleos Playground]({url}) › My Vehicle Data API öffnen.\n2. Den alten Schlüssel widerrufen, falls er noch angezeigt wird.\n3. **Get API Key** und mit deinen {account}-Zugangsdaten anmelden.\n4. Hier die neue Client-ID und das neue Client-Secret eingeben.",
+        "data": {
+          "client_id": "Client-ID",
+          "client_secret": "Client-Secret"
+        },
+        "data_description": {
+          "client_id": "Steht im Pleos Playground unter My Vehicle Data API nach „Get API Key“. Ohne Leerzeichen kopieren.",
+          "client_secret": "Steht neben der Client-ID. Es wird nur in deinem Home Assistant gespeichert und hier verdeckt angezeigt."
         }
       }
     },
     "error": {
-      "invalid_auth": "Client-ID oder Client-Secret stimmen nicht. Bitte beide Werte ohne Leerzeichen neu kopieren. Wurde der Schlüssel widerrufen, hole im Playground einen neuen.",
-      "no_vehicles": "Der Schlüssel enthält kein Auto. Ist das Auto in der App? Wurde der Schlüssel erst danach geholt? Sonst: im Playground › My Vehicle Data API den Schlüssel widerrufen, neu holen und hier eintragen.",
-      "no_new_vehicles": "Dieser Schlüssel enthält kein neues Auto. Ist das Auto schon in der App? Danach den Schlüssel im Playground widerrufen und neu holen.",
-      "other_vehicles": "Dieser Schlüssel enthält keines der eingerichteten Autos. Hast du die richtige Marke und das richtige Konto gewählt?",
-      "cannot_connect": "Pleos ist gerade nicht erreichbar. Bitte prüfe die Internetverbindung und versuche es später nochmal.",
-      "no_selection": "Bitte mindestens ein Auto anhaken.",
-      "unknown": "Unerwartete Antwort von Pleos. Bitte später nochmal versuchen."
+      "invalid_auth": "Client-ID oder Secret stimmen nicht. Bitte ohne Leerzeichen neu kopieren.",
+      "region_unsupported": "Pleos unterstützt deine Region nicht. Der persönliche API-Schlüssel funktioniert nur für Autos in Europa.",
+      "no_vehicles": "Der Schlüssel enthält kein Auto. Ist das Auto in deiner {account}-App? Wurde der Schlüssel danach geholt? So holst du einen neuen Schlüssel: im Pleos Playground › My Vehicle Data API den alten Schlüssel widerrufen, erneut „Get API Key“ und den neuen Schlüssel hier eingeben.",
+      "cannot_connect": "Pleos ist gerade nicht erreichbar. Prüfe deine Internetverbindung und versuche es später nochmal.",
+      "unknown": "Etwas Unerwartetes ist schiefgelaufen. Versuche es später nochmal. Passiert es öfter, schau ins Home-Assistant-Protokoll.",
+      "vehicle_already_configured": "Alle Autos dieses Schlüssels sind schon in Home Assistant eingerichtet. Um für sie einen neuen Schlüssel zu nutzen, öffne den bestehenden Eintrag und wähle „Neu konfigurieren“ › „Schlüssel ändern“.",
+      "no_vehicle_selected": "Bitte füge mindestens ein Auto hinzu.",
+      "no_new_vehicles": "Dieser Schlüssel enthält kein neues Auto. Hast du das Auto in der App hinzugefügt, bevor du den neuen Schlüssel geholt hast? Wenn nicht: hinzufügen, Schlüssel widerrufen, neuen holen und nochmal versuchen.",
+      "wrong_account": "Dieser Schlüssel enthält keines deiner hier eingerichteten Autos. Nimm den Schlüssel vom selben {account}-Konto.",
+      "key_in_use": "Dieser Schlüssel wird schon von einem anderen Eintrag dieser Integration genutzt."
     },
     "abort": {
-      "already_configured": "Dieser Schlüssel ist schon eingerichtet. Du findest ihn unter Einstellungen › Geräte & Dienste.",
-      "reauth_successful": "Der neue Schlüssel funktioniert. Die Daten werden wieder geholt.",
-      "reconfigure_successful": "Gespeichert.",
-      "vehicle_added": "Das neue Auto ist eingerichtet."
+      "already_configured": "Dieser Schlüssel ist schon eingerichtet. Zum Ändern öffne den bestehenden Eintrag und wähle „Neu konfigurieren“.",
+      "reconfigure_successful": "Fertig! Deine Änderungen sind gespeichert.",
+      "reauth_successful": "Fertig! Der neue Schlüssel funktioniert."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Autos und Intervall",
-        "description": "Ein neuer Name ändert den Anzeigenamen des Autos. Bestehende Entity-IDs bleiben gleich, damit Automationen weiterlaufen.\n\nNeues Auto oder neuer Schlüssel? Dafür in den drei Punkten der Integration **Neu konfigurieren** wählen.",
+        "title": "Autos umbenennen / Intervall",
+        "description": "Ändere die Namen deiner Autos und wie oft Daten geholt werden. Die Entitäten heißen nach dem Autonamen.",
         "data": {
-          "scan_interval": "Wie oft Daten holen?"
+          "scan_interval": "Wie oft Daten holen? (Minuten)"
         },
         "data_description": {
-          "scan_interval": "In Minuten. 10 Minuten passen meist gut."
+          "scan_interval": "Standard: 10 Minuten. Erlaubt: 5 bis 1440 Minuten (einmal am Tag). Das Auto schickt nur ab und zu neue Daten, sehr kurze Abstände bringen daher selten etwas."
         }
       }
     }
@@ -157,162 +159,60 @@
   "issues": {
     "auth_failed": {
       "title": "Der API-Schlüssel für {brand} gilt nicht mehr",
-      "description": "{title} bekommt keine Daten mehr, weil der Schlüssel widerrufen, neu ausgestellt oder abgelaufen ist.\n\nGehe zu **Einstellungen › Geräte & Dienste**, öffne Hyundai Kia Genesis (Pleos) und drücke bei der Meldung auf **Erneut authentifizieren**. Dort steht, wie du einen neuen Schlüssel holst."
+      "description": "Der API-Schlüssel für {brand} gilt nicht mehr – bitte neu eingeben.\n\nGeh zu **Einstellungen › Geräte & Dienste › Hyundai Kia Genesis (Pleos) - EU** und klicke auf **Erneut authentifizieren** (oder wähle **Neu konfigurieren** › **Schlüssel ändern**). Einen neuen Schlüssel bekommst du im [Pleos Playground]({url}) › My Vehicle Data API."
     },
     "vehicle_removed": {
       "title": "Auto {name} nicht mehr im Schlüssel",
       "fix_flow": {
         "step": {
           "confirm": {
-            "title": "Auto {name} entfernen?",
-            "description": "Das Auto {name} (Fahrgestellnummer endet auf {vin_end}) ist im API-Schlüssel nicht mehr enthalten, z. B. weil es verkauft oder aus der App entfernt wurde. Es kommen keine Daten mehr.\n\nMit **Absenden** entfernst du das Auto und seine Entitäten aus Home Assistant. Gehört das Auto noch dir, hole stattdessen im Pleos Playground einen neuen Schlüssel."
+            "title": "Auto {name} nicht mehr im Schlüssel",
+            "description": "Das Auto **{name}** (VIN endet auf …{vin_tail}) ist nicht mehr in deinem API-Schlüssel, zum Beispiel weil die Freigabe entzogen oder das Auto verkauft wurde.\n\nAus Home Assistant entfernen? Gerät und Entitäten werden gelöscht. Soll das Auto bleiben, hol stattdessen einen neuen Schlüssel, der es enthält (Neu konfigurieren › Schlüssel ändern)."
           }
+        },
+        "abort": {
+          "entry_not_found": "Den Integrationseintrag für dieses Auto gibt es nicht mehr."
         }
       }
     }
   },
-  "exceptions": {
-    "auth_failed": {
-      "message": "Der API-Schlüssel wurde abgelehnt."
-    },
-    "cannot_connect": {
-      "message": "Pleos ist nicht erreichbar."
-    },
-    "update_failed": {
-      "message": "Pleos hat keine Daten geliefert."
-    },
-    "vehicle_removed": {
-      "message": "Das Auto ist im API-Schlüssel nicht mehr enthalten."
-    }
-  },
   "entity": {
     "sensor": {
-      "air_temperature": {
-        "name": "Set Temperature"
-      },
-      "car_battery_percentage": {
-        "name": "Car Battery Level"
+      "ev_battery_percentage": {
+        "name": "EV Battery Level"
       },
       "ev_battery_capacity": {
         "name": "EV Battery Capacity"
       },
-      "ev_battery_percentage": {
-        "name": "EV Battery Level"
-      },
       "ev_charge_limit_ac": {
-        "name": "Ladelimit AC"
+        "name": "AC-Ladelimit"
       },
       "ev_charge_limit_dc": {
-        "name": "Ladelimit DC"
-      },
-      "ev_charging_status": {
-        "name": "Ladestatus",
-        "state": {
-          "not_charging": "Lädt nicht",
-          "charging": "Lädt (AC)",
-          "fast_charging": "Schnellladen (DC)",
-          "v2l_operating": "V2L aktiv",
-          "v2l_stop": "V2L gestoppt",
-          "v2x_operating": "V2X aktiv",
-          "reserved_charging": "Geplantes Laden",
-          "wireless_charging": "Kabelloses Laden"
-        }
-      },
-      "ev_driving_range": {
-        "name": "EV Range"
+        "name": "DC-Ladelimit"
       },
       "ev_estimated_current_charge_duration": {
         "name": "Estimated Charge Duration"
       },
-      "front_left_seat_status": {
-        "name": "Front Left Seat",
-        "state": {
-          "off": "Aus",
-          "low": "Niedrig",
-          "middle": "Mittel",
-          "high": "Hoch"
-        }
+      "ev_charging_status": {
+        "name": "Ladestatus"
       },
-      "front_left_seat_ventilation": {
-        "name": "Sitzbelüftung vorne links",
-        "state": {
-          "off": "Aus",
-          "low": "Niedrig",
-          "middle": "Mittel",
-          "high": "Hoch"
-        }
-      },
-      "front_right_seat_status": {
-        "name": "Front Right Seat",
-        "state": {
-          "off": "Aus",
-          "low": "Niedrig",
-          "middle": "Mittel",
-          "high": "Hoch"
-        }
-      },
-      "front_right_seat_ventilation": {
-        "name": "Sitzbelüftung vorne rechts",
-        "state": {
-          "off": "Aus",
-          "low": "Niedrig",
-          "middle": "Mittel",
-          "high": "Hoch"
-        }
+      "ev_driving_range": {
+        "name": "EV Range"
       },
       "fuel_driving_range": {
         "name": "Fuel Driving Range"
       },
+      "total_driving_range": {
+        "name": "Total Driving Range"
+      },
       "fuel_level": {
         "name": "Fuel Level"
       },
-      "last_updated_at": {
-        "name": "Last Updated At"
-      },
-      "location_last_updated_at": {
-        "name": "Location Last Updated"
+      "ev_battery_remain_ratio": {
+        "name": "EV-Akku Restanteil"
       },
       "odometer": {
         "name": "Odometer"
-      },
-      "outside_temperature": {
-        "name": "Outside temperature"
-      },
-      "rear_left_seat_status": {
-        "name": "Rear Left Seat",
-        "state": {
-          "off": "Aus",
-          "low": "Niedrig",
-          "middle": "Mittel",
-          "high": "Hoch"
-        }
-      },
-      "rear_left_seat_ventilation": {
-        "name": "Sitzbelüftung hinten links",
-        "state": {
-          "off": "Aus",
-          "low": "Niedrig",
-          "middle": "Mittel",
-          "high": "Hoch"
-        }
-      },
-      "rear_right_seat_status": {
-        "name": "Rear Right Seat",
-        "state": {
-          "off": "Aus",
-          "low": "Niedrig",
-          "middle": "Mittel",
-          "high": "Hoch"
-        }
-      },
-      "rear_right_seat_ventilation": {
-        "name": "Sitzbelüftung hinten rechts",
-        "state": {
-          "off": "Aus",
-          "low": "Niedrig",
-          "middle": "Mittel",
-          "high": "Hoch"
-        }
       },
       "tire_pressure_front_left": {
         "name": "Tire Pressure - Front Left"
@@ -326,41 +226,29 @@
       "tire_pressure_rear_right": {
         "name": "Tire Pressure - Rear Right"
       },
-      "total_driving_range": {
-        "name": "Total Driving Range"
+      "air_temperature": {
+        "name": "Set Temperature"
+      },
+      "outside_temperature": {
+        "name": "Outside temperature"
+      },
+      "steering_wheel_heat_level": {
+        "name": "Lenkradheizung Stufe"
+      },
+      "warnings": {
+        "name": "Warnungen"
+      },
+      "last_updated_at": {
+        "name": "Last Updated At"
+      },
+      "location_last_updated_at": {
+        "name": "Location Last Updated"
       },
       "vehicle_identification_number": {
         "name": "Vehicle Identification Number"
       }
     },
     "binary_sensor": {
-      "accessory_on": {
-        "name": "Accessory"
-      },
-      "air_control_is_on": {
-        "name": "Air Conditioner"
-      },
-      "back_left_door_is_locked": {
-        "name": "Back Left Door Lock"
-      },
-      "back_left_door_is_open": {
-        "name": "Back Left Door"
-      },
-      "back_right_door_is_locked": {
-        "name": "Back Right Door Lock"
-      },
-      "back_right_door_is_open": {
-        "name": "Back Right Door"
-      },
-      "brake_fluid_warning_is_on": {
-        "name": "Brake Fluid Warning"
-      },
-      "defrost_is_on": {
-        "name": "Defrost"
-      },
-      "engine_is_running": {
-        "name": "Engine"
-      },
       "ev_battery_is_charging": {
         "name": "EV Battery Charge"
       },
@@ -373,65 +261,71 @@
       "ev_v2x_status": {
         "name": "V2X status"
       },
-      "front_left_door_is_locked": {
-        "name": "Front Left Door Lock"
+      "engine_is_running": {
+        "name": "Engine"
       },
-      "front_left_door_is_open": {
-        "name": "Front Left Door"
-      },
-      "front_left_seat_heater_on": {
-        "name": "Front Left Seat Heater"
-      },
-      "front_right_door_is_locked": {
-        "name": "Front Right Door Lock"
-      },
-      "front_right_door_is_open": {
-        "name": "Front Right Door"
-      },
-      "front_right_seat_heater_on": {
-        "name": "Front Right Seat Heater"
-      },
-      "fuel_level_is_low": {
-        "name": "Fuel Low Level"
-      },
-      "headlamp_status": {
-        "name": "Headlamp Status"
-      },
-      "hood_is_open": {
-        "name": "Hood"
+      "accessory_on": {
+        "name": "Accessory"
       },
       "ign3": {
         "name": "IGN3"
       },
+      "sleep_mode_check": {
+        "name": "Sleep Mode Check"
+      },
+      "transmission_condition": {
+        "name": "Transmission Condition"
+      },
+      "front_left_door_is_open": {
+        "name": "Front Left Door"
+      },
+      "front_right_door_is_open": {
+        "name": "Front Right Door"
+      },
+      "back_left_door_is_open": {
+        "name": "Back Left Door"
+      },
+      "back_right_door_is_open": {
+        "name": "Back Right Door"
+      },
+      "front_left_door_is_locked": {
+        "name": "Front Left Door Lock"
+      },
+      "front_right_door_is_locked": {
+        "name": "Front Right Door Lock"
+      },
+      "back_left_door_is_locked": {
+        "name": "Back Left Door Lock"
+      },
+      "back_right_door_is_locked": {
+        "name": "Back Right Door Lock"
+      },
       "is_locked": {
         "name": "Locked"
       },
-      "oil_level_warning_is_on": {
-        "name": "Oil Level Warning"
+      "hood_is_open": {
+        "name": "Hood"
       },
-      "rear_left_seat_heater_on": {
-        "name": "Rear Left Seat Heater"
+      "trunk_is_open": {
+        "name": "Trunk"
       },
-      "rear_right_seat_heater_on": {
-        "name": "Rear Right Seat Heater"
+      "sunroof_is_open": {
+        "name": "Sunroof"
       },
-      "sleep_mode_check": {
-        "name": "Sleep Mode Check"
+      "fuel_level_is_low": {
+        "name": "Fuel Low Level"
+      },
+      "washer_fluid_warning_is_on": {
+        "name": "Washer Fluid Warning"
       },
       "smart_key_battery_warning_is_on": {
         "name": "Smart Key Battery Warning"
       },
-      "steering_wheel_heater_is_on": {
-        "name": "Steering Wheel Heater"
+      "brake_fluid_warning_is_on": {
+        "name": "Brake Fluid Warning"
       },
-      "stop_lamp_left": {
-        "name": "Rear Left Lamp Fault"
-      },
-      "stop_lamp_right": {
-        "name": "Rear Right Lamp Fault"
-      },
-      "sunroof_is_open": {
-        "name": "Sunroof"
+      "oil_level_warning_is_on": {
+        "name": "Oil Level Warning"
       },
       "tire_pressure_all_warning_is_on": {
         "name": "Tire Pressure - All"
@@ -448,26 +342,47 @@
       "tire_pressure_rear_right_warning_is_on": {
         "name": "Tire Pressure - Rear Right"
       },
-      "transmission_condition": {
-        "name": "Transmission Condition"
+      "air_control_is_on": {
+        "name": "Air Conditioner"
       },
-      "trunk_is_open": {
-        "name": "Trunk"
+      "defrost_is_on": {
+        "name": "Defrost"
+      },
+      "steering_wheel_heater_is_on": {
+        "name": "Steering Wheel Heater"
+      },
+      "front_left_seat_heater_on": {
+        "name": "Front Left Seat Heater"
+      },
+      "front_right_seat_heater_on": {
+        "name": "Front Right Seat Heater"
+      },
+      "rear_left_seat_heater_on": {
+        "name": "Rear Left Seat Heater"
+      },
+      "rear_right_seat_heater_on": {
+        "name": "Rear Right Seat Heater"
+      },
+      "headlamp_status": {
+        "name": "Headlamp Status"
       },
       "turn_signal_left_front": {
         "name": "Turn Signal Left Front"
       },
-      "turn_signal_left_rear": {
-        "name": "Turn Signal Left Rear"
-      },
       "turn_signal_right_front": {
         "name": "Turn Signal Right Front"
       },
+      "stop_lamp_left": {
+        "name": "Rear Left Lamp Fault"
+      },
+      "stop_lamp_right": {
+        "name": "Rear Right Lamp Fault"
+      },
+      "turn_signal_left_rear": {
+        "name": "Turn Signal Left Rear"
+      },
       "turn_signal_right_rear": {
         "name": "Turn Signal Right Rear"
-      },
-      "washer_fluid_warning_is_on": {
-        "name": "Washer Fluid Warning"
       }
     },
     "device_tracker": {
