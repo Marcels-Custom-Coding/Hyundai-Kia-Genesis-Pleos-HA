@@ -175,5 +175,199 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "ev_battery_percentage": {
+        "name": "EV Battery Level"
+      },
+      "ev_battery_capacity": {
+        "name": "EV Battery Capacity"
+      },
+      "ev_charge_limit_ac": {
+        "name": "AC-Ladelimit"
+      },
+      "ev_charge_limit_dc": {
+        "name": "DC-Ladelimit"
+      },
+      "ev_estimated_current_charge_duration": {
+        "name": "Estimated Charge Duration"
+      },
+      "ev_charging_status": {
+        "name": "Ladestatus"
+      },
+      "ev_driving_range": {
+        "name": "EV Range"
+      },
+      "fuel_driving_range": {
+        "name": "Fuel Driving Range"
+      },
+      "total_driving_range": {
+        "name": "Total Driving Range"
+      },
+      "fuel_level": {
+        "name": "Fuel Level"
+      },
+      "ev_battery_remain_ratio": {
+        "name": "EV-Akku Restanteil"
+      },
+      "odometer": {
+        "name": "Odometer"
+      },
+      "tire_pressure_front_left": {
+        "name": "Tire Pressure - Front Left"
+      },
+      "tire_pressure_front_right": {
+        "name": "Tire Pressure - Front Right"
+      },
+      "tire_pressure_rear_left": {
+        "name": "Tire Pressure - Rear Left"
+      },
+      "tire_pressure_rear_right": {
+        "name": "Tire Pressure - Rear Right"
+      },
+      "air_temperature": {
+        "name": "Set Temperature"
+      },
+      "outside_temperature": {
+        "name": "Outside temperature"
+      },
+      "steering_wheel_heat_level": {
+        "name": "Lenkradheizung Stufe"
+      },
+      "warnings": {
+        "name": "Warnungen"
+      },
+      "last_updated_at": {
+        "name": "Last Updated At"
+      },
+      "location_last_updated_at": {
+        "name": "Location Last Updated"
+      },
+      "vehicle_identification_number": {
+        "name": "Vehicle Identification Number"
+      }
+    },
+    "binary_sensor": {
+      "ev_battery_is_charging": {
+        "name": "EV Battery Charge"
+      },
+      "ev_battery_is_plugged_in": {
+        "name": "EV Battery Plug"
+      },
+      "ev_v2l_status": {
+        "name": "V2L status"
+      },
+      "ev_v2x_status": {
+        "name": "V2X status"
+      },
+      "engine_is_running": {
+        "name": "Engine"
+      },
+      "accessory_on": {
+        "name": "Accessory"
+      },
+      "ign3": {
+        "name": "IGN3"
+      },
+      "sleep_mode_check": {
+        "name": "Sleep Mode Check"
+      },
+      "transmission_condition": {
+        "name": "Transmission Condition"
+      },
+      "front_left_door_is_open": {
+        "name": "Front Left Door"
+      },
+      "front_right_door_is_open": {
+        "name": "Front Right Door"
+      },
+      "back_left_door_is_open": {
+        "name": "Back Left Door"
+      },
+      "back_right_door_is_open": {
+        "name": "Back Right Door"
+      },
+      "front_left_door_is_locked": {
+        "name": "Front Left Door Lock"
+      },
+      "front_right_door_is_locked": {
+        "name": "Front Right Door Lock"
+      },
+      "back_left_door_is_locked": {
+        "name": "Back Left Door Lock"
+      },
+      "back_right_door_is_locked": {
+        "name": "Back Right Door Lock"
+      },
+      "is_locked": {
+        "name": "Locked"
+      },
+      "hood_is_open": {
+        "name": "Hood"
+      },
+      "trunk_is_open": {
+        "name": "Trunk"
+      },
+      "sunroof_is_open": {
+        "name": "Sunroof"
+      },
+      "fuel_level_is_low": {
+        "name": "Fuel Low Level"
+      },
+      "washer_fluid_warning_is_on": {
+        "name": "Washer Fluid Warning"
+      },
+      "smart_key_battery_warning_is_on": {
+        "name": "Smart Key Battery Warning"
+      },
+      "brake_fluid_warning_is_on": {
+        "name": "Brake Fluid Warning"
+      },
+      "oil_level_warning_is_on": {
+        "name": "Oil Level Warning"
+      },
+      "tire_pressure_all_warning_is_on": {
+        "name": "Tire Pressure - All"
+      },
+      "tire_pressure_front_left_warning_is_on": {
+        "name": "Tire Pressure - Front Left"
+      },
+      "tire_pressure_front_right_warning_is_on": {
+        "name": "Tire Pressure - Front Right"
+      },
+      "tire_pressure_rear_left_warning_is_on": {
+        "name": "Tire Pressure - Rear Left"
+      },
+      "tire_pressure_rear_right_warning_is_on": {
+        "name": "Tire Pressure - Rear Right"
+      },
+      "air_control_is_on": {
+        "name": "Air Conditioner"
+      },
+      "defrost_is_on": {
+        "name": "Defrost"
+      },
+      "steering_wheel_heater_is_on": {
+        "name": "Steering Wheel Heater"
+      },
+      "front_left_seat_heater_on": {
+        "name": "Front Left Seat Heater"
+      },
+      "front_right_seat_heater_on": {
+        "name": "Front Right Seat Heater"
+      },
+      "rear_left_seat_heater_on": {
+        "name": "Rear Left Seat Heater"
+      },
+      "rear_right_seat_heater_on": {
+        "name": "Rear Right Seat Heater"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Location"
+      }
+    }
   }
 }
