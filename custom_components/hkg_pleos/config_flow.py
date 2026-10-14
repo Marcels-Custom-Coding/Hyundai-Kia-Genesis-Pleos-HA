@@ -1,4 +1,4 @@
-"""Config flow for Hyundai Kia Genesis (Pleos)."""
+"""Config flow for Hyundai Kia Genesis (Pleos) - EU."""
 
 from __future__ import annotations
 

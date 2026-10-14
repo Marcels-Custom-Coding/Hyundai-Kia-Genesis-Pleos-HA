@@ -1,4 +1,4 @@
-"""Hyundai Kia Genesis (Pleos) integration: vehicle data via the Pleos API."""
+"""Hyundai Kia Genesis (Pleos) - EU integration: vehicle data via the Pleos API."""
 
 from __future__ import annotations
 

@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Hyundai Kia Genesis (Pleos)",
+        "title": "Hyundai Kia Genesis (Pleos) - EU",
         "description": "This integration shows your car's data in Home Assistant: battery, range, doors, position and more. The data comes from the official Pleos Vehicle Data API.\n\nControlling the car (climate, charging, locks) is not possible this way.\n\nWhich brand is your car?",
         "data": {
           "brand": "Brand"
@@ -159,7 +159,7 @@
   "issues": {
     "auth_failed": {
       "title": "The API key for {brand} is no longer valid",
-      "description": "The API key for {brand} is no longer valid – enter it again.\n\nGo to **Settings › Devices & services › Hyundai Kia Genesis (Pleos)** and click **Re-authenticate** (or choose **Reconfigure** › **Change the key**). You can get a new key in the [Pleos Playground]({url}) › My Vehicle Data API."
+      "description": "The API key for {brand} is no longer valid – enter it again.\n\nGo to **Settings › Devices & services › Hyundai Kia Genesis (Pleos) - EU** and click **Re-authenticate** (or choose **Reconfigure** › **Change the key**). You can get a new key in the [Pleos Playground]({url}) › My Vehicle Data API."
     },
     "vehicle_removed": {
       "title": "Car {name} is no longer in the key",

@@ -1,4 +1,4 @@
-# Hyundai Kia Genesis (Pleos)
+# Hyundai Kia Genesis (Pleos) - EU
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![Validate](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/actions/workflows/validate.yml/badge.svg)](https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA/actions/workflows/validate.yml)
@@ -67,7 +67,7 @@ Jeder Nutzer holt sich seinen eigenen, kostenlosen Schlüssel (Weg „Private Us
 1. Auf [pleos.ai/playground](https://pleos.ai/playground) › Personen-Symbol › **My Vehicle Data API** den Reiter der Marke öffnen.
 2. Den bestehenden Schlüssel **widerrufen** (Revoke).
 3. Mit **Get API Key** einen neuen Schlüssel holen.
-4. In Home Assistant: **Einstellungen › Geräte & Dienste › Hyundai Kia Genesis (Pleos)** › Menü (⋮) › **Neu konfigurieren** › „Schlüssel ändern“ und die neuen Daten eingeben.
+4. In Home Assistant: **Einstellungen › Geräte & Dienste › Hyundai Kia Genesis (Pleos) - EU** › Menü (⋮) › **Neu konfigurieren** › „Schlüssel ändern“ und die neuen Daten eingeben.
 
 Wird der alte Schlüssel ungültig, startet Home Assistant automatisch den Erneuerungs-Dialog und zeigt eine Meldung unter **Einstellungen › Reparaturen**.
 
@@ -77,7 +77,7 @@ Wird der alte Schlüssel ungültig, startet Home Assistant automatisch den Erneu
 
 1. HACS öffnen › Menü (⋮) oben rechts › **Benutzerdefinierte Repositories**.
 2. URL `https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA` eintragen, Typ **Integration**, hinzufügen.
-3. „Hyundai Kia Genesis (Pleos)“ suchen und **herunterladen**.
+3. „Hyundai Kia Genesis (Pleos) - EU“ suchen und **herunterladen**.
 4. Home Assistant **neu starten**.
 
 [![In HACS öffnen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Marcels-Custom-Coding&repository=Hyundai-Kia-Genesis-Pleos-HA&category=integration)
@@ -89,7 +89,7 @@ Wird der alte Schlüssel ungültig, startet Home Assistant automatisch den Erneu
 
 ### Einrichtung
 
-**Einstellungen › Geräte & Dienste › Integration hinzufügen › „Hyundai Kia Genesis (Pleos)“**
+**Einstellungen › Geräte & Dienste › Integration hinzufügen › „Hyundai Kia Genesis (Pleos) - EU“**
 
 [![Integration hinzufügen](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hkg_pleos)
 
@@ -213,7 +213,7 @@ Every user gets their own free key ("Private Users" path). It takes about five m
 1. On [pleos.ai/playground](https://pleos.ai/playground) › person icon › **My Vehicle Data API**, open your brand's tab.
 2. **Revoke** the existing key.
 3. Get a new one with **Get API Key**.
-4. In Home Assistant: **Settings › Devices & services › Hyundai Kia Genesis (Pleos)** › menu (⋮) › **Reconfigure** › "Change key" and enter the new values.
+4. In Home Assistant: **Settings › Devices & services › Hyundai Kia Genesis (Pleos) - EU** › menu (⋮) › **Reconfigure** › "Change key" and enter the new values.
 
 If the old key stops working, Home Assistant starts the re-authentication dialog automatically and shows a notice under **Settings › Repairs**.
 
@@ -223,7 +223,7 @@ If the old key stops working, Home Assistant starts the re-authentication dialog
 
 1. Open HACS › menu (⋮) top right › **Custom repositories**.
 2. Enter `https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA`, type **Integration**, add.
-3. Search for "Hyundai Kia Genesis (Pleos)" and **download** it.
+3. Search for "Hyundai Kia Genesis (Pleos) - EU" and **download** it.
 4. **Restart** Home Assistant.
 
 [![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Marcels-Custom-Coding&repository=Hyundai-Kia-Genesis-Pleos-HA&category=integration)
@@ -235,7 +235,7 @@ If the old key stops working, Home Assistant starts the re-authentication dialog
 
 ### Setup
 
-**Settings › Devices & services › Add integration › "Hyundai Kia Genesis (Pleos)"**
+**Settings › Devices & services › Add integration › "Hyundai Kia Genesis (Pleos) - EU"**
 
 [![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hkg_pleos)
 

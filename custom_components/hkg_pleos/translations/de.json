@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Hyundai Kia Genesis (Pleos)",
+        "title": "Hyundai Kia Genesis (Pleos) - EU",
         "description": "Diese Integration zeigt Daten deines Autos in Home Assistant: Akku, Reichweite, Türen, Position und mehr. Die Daten kommen von der offiziellen Pleos Vehicle Data API.\n\nSteuern (Klima, Laden, Schloss) ist über diesen Weg nicht möglich.\n\nVon welcher Marke ist dein Auto?",
         "data": {
           "brand": "Marke"
@@ -159,7 +159,7 @@
   "issues": {
     "auth_failed": {
       "title": "Der API-Schlüssel für {brand} gilt nicht mehr",
-      "description": "Der API-Schlüssel für {brand} gilt nicht mehr – bitte neu eingeben.\n\nGeh zu **Einstellungen › Geräte & Dienste › Hyundai Kia Genesis (Pleos)** und klicke auf **Erneut authentifizieren** (oder wähle **Neu konfigurieren** › **Schlüssel ändern**). Einen neuen Schlüssel bekommst du im [Pleos Playground]({url}) › My Vehicle Data API."
+      "description": "Der API-Schlüssel für {brand} gilt nicht mehr – bitte neu eingeben.\n\nGeh zu **Einstellungen › Geräte & Dienste › Hyundai Kia Genesis (Pleos) - EU** und klicke auf **Erneut authentifizieren** (oder wähle **Neu konfigurieren** › **Schlüssel ändern**). Einen neuen Schlüssel bekommst du im [Pleos Playground]({url}) › My Vehicle Data API."
     },
     "vehicle_removed": {
       "title": "Auto {name} nicht mehr im Schlüssel",

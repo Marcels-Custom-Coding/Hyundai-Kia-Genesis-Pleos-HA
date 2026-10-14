@@ -1,4 +1,4 @@
-"""Constants for the Hyundai Kia Genesis (Pleos) integration."""
+"""Constants for the Hyundai Kia Genesis (Pleos) - EU integration."""
 
 from __future__ import annotations
 

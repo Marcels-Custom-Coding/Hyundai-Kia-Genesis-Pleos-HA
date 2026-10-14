@@ -1,4 +1,4 @@
-"""Repair flows for Hyundai Kia Genesis (Pleos)."""
+"""Repair flows for Hyundai Kia Genesis (Pleos) - EU."""
 
 from __future__ import annotations
 
