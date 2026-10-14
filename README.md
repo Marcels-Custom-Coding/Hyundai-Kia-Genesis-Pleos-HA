@@ -6,7 +6,39 @@
 
 Home Assistant integration for Hyundai, Kia and Genesis vehicles using the official **Pleos Vehicle Data API**.
 
-**[Deutsch](#deutsch)** · **[English](#english)** · **[Entitäten / Entities](#entitäten--entities)**
+## Schnellinstallation / Quick install
+
+Die Integration ist (noch) nicht im HACS-Standardkatalog. Du fügst dieses Repository einmalig als **benutzerdefiniertes Repository** hinzu.
+*Not (yet) in the default HACS store – add this repository once as a **custom repository**.*
+
+**1. Repository in HACS öffnen / Open the repository in HACS**
+
+[![In HACS öffnen / Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Marcels-Custom-Coding&repository=Hyundai-Kia-Genesis-Pleos-HA&category=integration)
+
+Der Button öffnet dein Home Assistant und fragt, ob das Repository zu HACS hinzugefügt werden soll. Dann **Herunterladen** klicken.
+*The button opens your Home Assistant and asks to add the repository to HACS. Then click **Download**.*
+
+<details>
+<summary>Ohne Button / Without the button</summary>
+
+1. HACS öffnen › oben rechts **⋮** › **Benutzerdefinierte Repositories**
+   *Open HACS › top right **⋮** › **Custom repositories***
+2. Repository: `https://github.com/Marcels-Custom-Coding/Hyundai-Kia-Genesis-Pleos-HA` · Typ / Type: **Integration** › **Hinzufügen / Add**
+3. In HACS nach „Hyundai Kia Genesis (Pleos) - EU“ suchen › **Herunterladen / Download**
+
+</details>
+
+**2. Home Assistant neu starten / Restart Home Assistant**
+
+**3. Integration einrichten / Set up the integration**
+
+[![Integration hinzufügen / Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hkg_pleos)
+
+Oder / Or: **Einstellungen › Geräte & Dienste › Integration hinzufügen** › „Hyundai Kia Genesis (Pleos) - EU“. Der Dialog erklärt dir, wie du den API-Schlüssel bekommst. *The dialog explains how to get your API key.*
+
+---
+
+**[Schnellinstallation / Quick install](#schnellinstallation--quick-install)** · **[Deutsch](#deutsch)** · **[English](#english)** · **[Entitäten / Entities](#entitäten--entities)**
 
 ---
 
