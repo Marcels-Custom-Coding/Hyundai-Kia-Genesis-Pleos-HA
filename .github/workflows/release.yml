@@ -38,8 +38,12 @@ jobs:
             found { print }
           ' CHANGELOG.md > notes.md
           test -s notes.md || echo "Release $TAG" > notes.md
+      - name: Build hkg_pleos.zip
+        run: |
+          cd custom_components/hkg_pleos
+          zip -r "$GITHUB_WORKSPACE/hkg_pleos.zip" . -x "__pycache__/*" "*.pyc"
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ inputs.tag || github.ref_name }}
-        run: gh release create "$TAG" --title "$TAG" --notes-file notes.md --target "$GITHUB_SHA"
+        run: gh release create "$TAG" --title "$TAG" --notes-file notes.md --target "$GITHUB_SHA" hkg_pleos.zip

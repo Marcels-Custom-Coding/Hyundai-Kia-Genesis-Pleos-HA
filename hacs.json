@@ -36,5 +36,7 @@
     "SI",
     "SK",
     "UA"
-  ]
+  ],
+  "zip_release": true,
+  "filename": "hkg_pleos.zip"
 }

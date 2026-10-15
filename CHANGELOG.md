@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.2] – 2026-10-15
+
+### Geändert / Changed
+- Releases enthalten jetzt `hkg_pleos.zip`; HACS installiert diese Datei und zählt die Downloads.
+  *Releases now include `hkg_pleos.zip`; HACS installs this file and counts downloads.*
+
 ## [0.1.1] – 2026-10-14
 
 ### Behoben / Fixed
